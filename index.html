@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanduíche do Chefe</title>
+    <link rel="shortcut icon" href="img/sand.chefe.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="img/sand. chefe (1).png" type="image/x-icon">
+</head>
+<body>
+    <div class="container">
+        <div class="divlogo"><img id="logo" src="img/sand. chefe (1).png" alt=""></div>
+        
+        <div id="menu">
+            <h2>Cardápio</h2>
+            <div class="menu-item">
+                <img src="/api/placeholder/120/120" alt="Sanduíche do Chefe">
+                <div>
+                    <h3>Sanduíche do Chefe</h3>
+                    <p>Delicioso hambúrguer artesanal com queijo, bacon, alface e molho especial.</p>
+                    <p>Preço: R$ 25,00</p>
+                    <button onclick="addToCart('Sanduíche do Chefe', 25)">Adicionar ao Carrinho</button>
+                </div>
+            </div>
+            <!-- Adicione mais itens ao cardápio aqui -->
+        </div>
+    </div>
+
+    <div id="cart-icon" onclick="toggleCart()">
+        🛒
+        <span id="cart-count">0</span>
+    </div>
+
+    <div id="cart-modal" onclick="closeCartIfClickedOutside(event)">
+        <div class="cart-content">
+            <h2>Seu Carrinho</h2>
+            <div id="cart-items"></div>
+            <p>Total: R$ <span id="cart-total">0.00</span></p>
+            <h3>Informações do Pedido</h3>
+            <select id="delivery-method">
+                <option value="retirada">Retirar no local</option>
+                <option value="entrega">Entrega a domicílio</option>
+            </select>
+            <div id="address-fields" style="display:none;">
+                <input type="text" id="customer-address" placeholder="Endereço de entrega" required>
+            </div>
+            <h3>Forma de Pagamento:</h3>
+            <select id="payment-method" onchange="toggleCashFields()">
+                
+                <option value="pix">PIX</option>
+                <option value="cartao">Cartão</option>
+                <option value="dinheiro">Dinheiro</option>
+            </select>
+            <div id="cash-payment-fields">
+                <input type="number" id="cash-amount" placeholder="Valor em dinheiro" step="0.01" min="0" oninput="calculateChange()">
+                <p>Troco: R$ <span id="change-amount">0.00</span></p>
+            </div>
+            <button onclick="finalizePedido()">Finalizar Pedido</button>
+            <button onclick="toggleCart()">Fechar Carrinho</button>
+        </div>
+    </div>
+
+    <script src="chefe.js"></script>
+</body>
+</html>
