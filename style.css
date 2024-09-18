@@ -16,6 +16,12 @@ body {
 #titulo {
     display: flex;
     justify-content: center;
+    flex-direction:column;
+    text-align: center;
+}
+
+#titulo p a {
+    color:black;
 }
 
 #logo {
@@ -144,4 +150,16 @@ input[type="text"], input[type="number"], select {
 #cash-payment-fields {
     display: none;
     margin-top: 10px;
+}
+
+
+.footer {
+    color:#fff;
+    display: flex;
+    justify-content: center;
+    background-color: #333;
+}
+
+.footer a {
+   color:#fff;
 }
