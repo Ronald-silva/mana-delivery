@@ -155,6 +155,7 @@ input[type="text"], input[type="number"], select {
 
 .footer {
     color:#fff;
+    font-size:large;
     display: flex;
     justify-content: center;
     background-color: #333;
