@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Sanduíche do Chefe</title>
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
+</head>
+<body>
+    <div class="container">
+        <div class="divlogo">
+            <img id="logo" src="img/logo.png" alt="Logo Sanduíche do Chefe">
+        </div>
+        <h1>Painel Administrativo</h1>
+
+        <div class="form-container">
+            <h2>Adicionar/Editar Produto</h2>
+            <input type="hidden" id="produto-id">
+            <input type="text" id="produto-nome" placeholder="Nome do produto" required>
+            <select id="produto-categoria" required>
+                <option value="" disabled selected>Selecione a categoria</option>
+                <option value="Hambúrgueres">Hambúrgueres</option>
+                <option value="Pizzas Salgadas">Pizzas Salgadas</option>
+                <option value="Pizzas Doces">Pizzas Doces</option>
+                <option value="Bebidas">Bebidas</option>
+                <option value="Sobremesas">Sobremesas</option>
+                <option value="Outros">Outros</option>
+            </select>
+            <input type="text" id="produto-descricao" placeholder="Descrição do produto">
+            <input type="number" id="produto-preco" placeholder="Preço (ex.: 16.50)" step="0.01" required>
+            <input type="number" id="produto-preco-promocional" placeholder="Preço promocional (opcional)" step="0.01">
+            <label for="produto-disponivel">
+                <input type="checkbox" id="produto-disponivel" checked> Produto disponível
+            </label>
+            <label for="produto-adicionais">Adicionais (formato: Nome - Preço, separados por vírgula):</label>
+            <input type="text" id="produto-adicionais" placeholder="Ex.: Bacon - 3.00, Queijo Extra - 2.00">
+            <label for="produto-imagem">Selecione a imagem do produto:</label>
+            <div class="upload-container">
+                <input type="file" id="produto-imagem" accept="image/*">
+                <div class="imagem-preview-container">
+                    <img id="imagem-preview" src="" alt="Pré-visualização da imagem">
+                    <button id="remover-imagem" onclick="removerImagem()" style="display: none;">Remover Imagem</button>
+                </div>
+                <div id="upload-status" style="display: none;">Carregando imagem...</div>
+            </div>
+            <button id="salvar-btn" onclick="salvarProduto()">Salvar Produto</button>
+        </div>
+
+        <div class="produto-lista" id="produto-lista">
+            <!-- Lista de produtos será carregada aqui -->
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Siga-nos no <a href="https://www.instagram.com/sanduiche_do_chef/?__pwa=1" target="_blank">Instagram</a></p>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>
