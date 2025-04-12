@@ -4,13 +4,22 @@ const { MongoClient } = require('mongodb');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
-app.use(cors());
+
+// Update CORS configuration
+app.use(cors({
+    origin: ['http://127.0.0.1:5500', 'http://localhost:5500'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
+}));
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Configurar o MongoDB
-const uri = 'mongodb+srv://<usuario>:<senha>@cluster0.mongodb.net/sanduiche-do-chefe?retryWrites=true&w=majority'; // Substitua pela sua string de conexão
+const uri = process.env.MONGODB_URI; // Using the connection string from .env
 const client = new MongoClient(uri);
 let produtosCollection;
 
