@@ -10,6 +10,10 @@
         "use": "@vercel/static"
       },
       {
+        "src": "js/**",
+        "use": "@vercel/static"
+      },
+      {
         "src": "img/**",
         "use": "@vercel/static"
       },
@@ -19,6 +23,13 @@
       }
     ],
     "routes": [
+      {
+        "src": "/js/(.*)",
+        "dest": "/js/$1",
+        "headers": {
+          "Content-Type": "application/javascript"
+        }
+      },
       {
         "src": "/css/(.*)",
         "dest": "/css/$1"
@@ -32,13 +43,17 @@
         "dest": "js/server.js"
       },
       {
+        "src": "/admin",
+        "dest": "/admin.html"
+      },
+      {
         "src": "/(.*)",
         "dest": "js/server.js",
         "headers": {
           "Access-Control-Allow-Credentials": "true",
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Methods": "GET,OPTIONS,PATCH,DELETE,POST,PUT",
-          "Access-Control-Allow-Headers": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
+          "Access-Control-Allow-Headers": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
         }
       }
     ]

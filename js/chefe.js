@@ -1,5 +1,5 @@
-let cartItems = [];
-let total = 0;
+let cart = [];
+let cartTotal = 0;
 
 // Função para carregar os produtos do servidor
 // Atualizar a URL da API
@@ -62,82 +62,62 @@ async function carregarProdutos() {
     }
 }
 
-// Função para adicionar ao carrinho
-function addToCart(item, price) {
-    const existingItem = cartItems.find(cartItem => cartItem.item === item);
+function addToCart(name, price) {
+    // Procura se o item já existe no carrinho
+    const existingItem = cart.find(item => item.name === name);
     if (existingItem) {
         existingItem.quantity += 1;
     } else {
-        cartItems.push({ item, price, quantity: 1 });
+        cart.push({ name, price, quantity: 1 });
     }
-    total += price;
-    updateCart();
-
-    const cartIcon = document.getElementById('cart-icon');
-    cartIcon.classList.add('cart-added-animation');
+    cartTotal += price;
+    updateCartDisplay();
 }
 
-// Função para remover do carrinho
-function removeFromCart(itemName, event) {
-    event.stopPropagation();
-    const itemIndex = cartItems.findIndex(cartItem => cartItem.item === itemName);
-    if (itemIndex !== -1) {
-        const item = cartItems[itemIndex];
-        total -= item.price;
+function removeFromCart(index) {
+    const item = cart[index];
+    if (item.quantity > 1) {
         item.quantity -= 1;
-        if (item.quantity <= 0) {
-            cartItems.splice(itemIndex, 1);
-        }
-        updateCart();
+        cartTotal -= item.price;
+    } else {
+        cartTotal -= item.price;
+        cart.splice(index, 1);
     }
+    updateCartDisplay();
 }
 
-// Função otimizada para atualizar o carrinho
-function updateCart() {
-    const cartList = document.getElementById('cart-items');
-    const cartTotal = document.getElementById('cart-total');
+function updateCartDisplay() {
+    const cartItems = document.getElementById('cart-items');
     const cartCount = document.getElementById('cart-count');
-
-    const fragment = document.createDocumentFragment();
-    let totalItems = 0;
-
-    cartItems.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'cart-item';
-        const itemTotalPrice = (item.price * item.quantity).toFixed(2);
-        div.innerHTML = `
-            <span>${item.item} (${item.quantity}) - R$ ${itemTotalPrice}</span>
-            <button class="remove-item" onclick="removeFromCart('${item.item}', event)">Remover</button>
-        `;
-        fragment.appendChild(div);
-        totalItems += item.quantity;
-    });
-
-    cartList.innerHTML = '';
-    cartList.appendChild(fragment);
-    cartTotal.textContent = total.toFixed(2);
+    const cartTotalElement = document.getElementById('cart-total');
+    
+    // Calcula o total de itens (soma das quantidades)
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
     cartCount.textContent = totalItems;
+    cartTotalElement.textContent = cartTotal.toFixed(2);
+    
+    cartItems.innerHTML = '';
+    cart.forEach((item, index) => {
+        const itemElement = document.createElement('div');
+        itemElement.className = 'cart-item';
+        itemElement.innerHTML = `
+            ${item.name} x ${item.quantity} - R$ ${(item.price * item.quantity).toFixed(2)}
+            <button onclick="removeFromCart(${index})">Remover</button>
+        `;
+        cartItems.appendChild(itemElement);
+    });
 }
 
-// Função para abrir/fechar o carrinho
-function toggleCart(event) {
-    if (event) event.stopPropagation();
-    const cartModal = document.getElementById('cart-modal');
-    const isOpen = cartModal.style.display === 'flex';
-    cartModal.style.display = isOpen ? 'none' : 'flex';
-    if (!isOpen) {
-        cartModal.classList.add('modal-open-animation');
-    }
+function toggleCart() {
+    const modal = document.getElementById('cart-modal');
+    modal.style.display = modal.style.display === 'none' ? 'flex' : 'none';
 }
 
-// Função para fechar o carrinho ao clicar fora
 function closeCartIfClickedOutside(event) {
-    const cartModal = document.getElementById('cart-modal');
+    const modal = document.getElementById('cart-modal');
     const cartContent = document.querySelector('.cart-content');
-    const cartIcon = document.getElementById('cart-icon');
-
-    if (cartModal.style.display === 'flex' && !cartContent.contains(event.target) && !cartIcon.contains(event.target)) {
-        toggleCart();
+    if (event.target === modal) {
+        modal.style.display = 'none';
     }
 }
 
@@ -156,8 +136,8 @@ function toggleCashFields() {
 function calculateChange() {
     const cashAmount = parseFloat(document.getElementById('cash-amount').value) || 0;
     const changeAmount = document.getElementById('change-amount');
-    if (cashAmount >= total) {
-        changeAmount.textContent = (cashAmount - total).toFixed(2);
+    if (cashAmount >= cartTotal) {
+        changeAmount.textContent = (cashAmount - cartTotal).toFixed(2);
     } else {
         changeAmount.textContent = '0.00';
     }
@@ -184,11 +164,10 @@ function finalizePedido() {
 
     let pedidoTexto = `*Novo Pedido*\n\n`;
     pedidoTexto += `*Itens do Pedido:*\n`;
-    cartItems.forEach(item => {
-        const itemTotalPrice = (item.price * item.quantity).toFixed(2);
-        pedidoTexto += `- ${item.item} (${item.quantity}): R$ ${itemTotalPrice}\n`;
+    cart.forEach(item => {
+        pedidoTexto += `- ${item.name} (${item.quantity}): R$ ${item.price.toFixed(2)}\n`;
     });
-    pedidoTexto += `\n*Total:* R$ ${total.toFixed(2)}\n`;
+    pedidoTexto += `\n*Total:* R$ ${cartTotal.toFixed(2)}\n`;
     pedidoTexto += `*Método de Entrega:* ${deliveryMethod === 'entrega' ? 'Entrega a domicílio' : 'Retirada no local'}\n`;
     if (deliveryMethod === 'entrega') {
         pedidoTexto += `*Endereço de Entrega:* ${address}\n`;
@@ -207,17 +186,17 @@ function finalizePedido() {
 
     window.open(urlWhatsApp, '_blank');
 
-    cartItems = [];
-    total = 0;
-    updateCart();
+    cart = [];
+    cartTotal = 0;
+    updateCartDisplay();
     toggleCart();
 }
 
 // Carregar produtos ao abrir a página
 document.addEventListener('DOMContentLoaded', () => {
     carregarProdutos();
-    const cartModal = document.getElementById('cart-modal');
-    cartModal.style.display = 'none';
+    const modal = document.getElementById('cart-modal');
+    modal.style.display = 'none';
 });
 
 // Adicionar evento para fechar o modal ao clicar fora
