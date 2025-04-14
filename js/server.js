@@ -30,10 +30,11 @@ const mongoClient = new MongoClient(process.env.MONGODB_URI);
 async function connectDB() {
   try {
     await mongoClient.connect();
-    db = mongoClient.db('sanduiche-chefe');
+    db = mongoClient.db('sanduiche-do-chefe');
     console.log('Conectado ao MongoDB');
   } catch (error) {
     console.error('Erro ao conectar ao MongoDB:', error);
+    throw error;
   }
 }
 
@@ -48,6 +49,7 @@ app.get('/api/produtos', async (req, res) => {
     const produtos = await db.collection('produtos').find().toArray();
     res.json(produtos);
   } catch (error) {
+    console.error('Erro ao buscar produtos:', error);
     res.status(500).json({ error: 'Erro ao buscar produtos' });
   }
 });
@@ -61,6 +63,7 @@ app.post('/api/upload', async (req, res) => {
     });
     res.json(result);
   } catch (error) {
+    console.error('Erro ao fazer upload da imagem:', error);
     res.status(500).json({ error: 'Erro ao fazer upload da imagem' });
   }
 });
@@ -70,4 +73,7 @@ connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
   });
+}).catch(error => {
+  console.error('Erro ao iniciar o servidor:', error);
+  process.exit(1);
 });
