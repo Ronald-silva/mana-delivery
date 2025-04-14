@@ -137,7 +137,7 @@ async function salvarProduto() {
                 const [nome, preco] = item.trim().split('-').map(str => str.trim());
                 if (!nome || !preco) throw new Error('Formato inválido');
                 return { nome, preco: parseFloat(preco) || 0 };
-            }).filter(item => item.nome && item.preco > 0);
+            });
         } catch (error) {
             alert('Formato inválido para adicionais. Use: Nome - Preço, separados por vírgula (ex.: Bacon - 3.00, Queijo Extra - 2.00).');
             return;
@@ -147,8 +147,49 @@ async function salvarProduto() {
     salvarBtn.disabled = true;
     salvarBtn.textContent = 'Salvando...';
     uploadStatus.style.display = 'block';
+    uploadStatus.textContent = 'Preparando dados...';
 
     try {
+        // Comprimir imagem se necessário
+        let imageData = preview.src || null;
+        if (imageData && imageData.startsWith('data:image')) {
+            uploadStatus.textContent = 'Processando imagem...';
+            // Se a imagem for muito grande, redimensionar
+            const img = new Image();
+            img.src = imageData;
+            await new Promise((resolve) => {
+                img.onload = () => {
+                    if (img.width > 800 || img.height > 800) {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        const MAX_SIZE = 800;
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        if (width > height) {
+                            if (width > MAX_SIZE) {
+                                height *= MAX_SIZE / width;
+                                width = MAX_SIZE;
+                            }
+                        } else {
+                            if (height > MAX_SIZE) {
+                                width *= MAX_SIZE / height;
+                                height = MAX_SIZE;
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        ctx.drawImage(img, 0, 0, width, height);
+                        imageData = canvas.toDataURL('image/jpeg', 0.8);
+                    }
+                    resolve();
+                };
+            });
+        }
+
+        uploadStatus.textContent = 'Enviando dados...';
+
         const produtoData = {
             nome,
             categoria,
@@ -157,7 +198,7 @@ async function salvarProduto() {
             precoPromocional,
             disponivel,
             adicionais,
-            image: preview.src || null
+            image: imageData
         };
 
         const url = id ? `${API_URL}/api/produtos/${id}` : `${API_URL}/api/produtos`;
@@ -172,7 +213,8 @@ async function salvarProduto() {
         });
 
         if (!response.ok) {
-            throw new Error(`Erro ao salvar produto: ${response.status} - ${response.statusText}`);
+            const errorData = await response.json();
+            throw new Error(errorData.error || `Erro ${response.status}: ${response.statusText}`);
         }
 
         const data = await response.json();
@@ -182,7 +224,7 @@ async function salvarProduto() {
         await carregarProdutos();
     } catch (error) {
         console.error('Erro ao salvar produto:', error);
-        alert('Erro ao salvar produto. Verifique o console para mais detalhes.');
+        alert(`Erro ao salvar produto: ${error.message}`);
     } finally {
         salvarBtn.disabled = false;
         salvarBtn.textContent = 'Salvar Produto';

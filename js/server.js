@@ -8,20 +8,29 @@ const cloudinary = require('cloudinary').v2;
 // Carregar variáveis de ambiente
 dotenv.config();
 
-// Configurar Cloudinary
+// Configurar Cloudinary com timeout aumentado
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+  timeout: 120000 // 2 minutos
 });
 
 const app = express();
 
-// Middleware
+// Middleware com limites aumentados
 app.use(cors());
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.static(path.join(__dirname, '../')));
+
+// Timeout para requisições
+app.use((req, res, next) => {
+  res.setTimeout(120000, () => {
+    res.status(504).json({ error: 'Timeout da requisição' });
+  });
+  next();
+});
 
 // Conexão com MongoDB
 let db;
@@ -84,18 +93,28 @@ app.get('/api/produtos', async (req, res) => {
   }
 });
 
-// Criar novo produto
+// Criar novo produto com melhor tratamento de erros
 app.post('/api/produtos', basicAuth, async (req, res) => {
   try {
     const database = await connectDB();
     const { nome, categoria, descricao, preco, precoPromocional, disponivel, adicionais, image } = req.body;
     
+    if (!nome || !categoria || !preco) {
+      return res.status(400).json({ error: 'Campos obrigatórios faltando' });
+    }
+
     let imageUrl = '';
     if (image) {
-      const uploadResult = await cloudinary.uploader.upload(image, {
-        folder: 'sanduiche-chefe'
-      });
-      imageUrl = uploadResult.secure_url;
+      try {
+        const uploadResult = await cloudinary.uploader.upload(image, {
+          folder: 'sanduiche-chefe',
+          timeout: 120000
+        });
+        imageUrl = uploadResult.secure_url;
+      } catch (uploadError) {
+        console.error('Erro no upload da imagem:', uploadError);
+        return res.status(500).json({ error: 'Erro no upload da imagem', details: uploadError.message });
+      }
     }
 
     const novoProduto = {
@@ -105,7 +124,7 @@ app.post('/api/produtos', basicAuth, async (req, res) => {
       preco: parseFloat(preco),
       precoPromocional: precoPromocional ? parseFloat(precoPromocional) : null,
       disponivel: disponivel === 'true' || disponivel === true,
-      adicionais: adicionais ? JSON.parse(adicionais) : [],
+      adicionais: Array.isArray(adicionais) ? adicionais : [],
       imagem: imageUrl,
       createdAt: new Date()
     };
