@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const cloudinary = require('cloudinary').v2;
 
 // Carregar variáveis de ambiente
@@ -84,20 +84,102 @@ app.get('/api/produtos', async (req, res) => {
   }
 });
 
-// API para upload de imagens (com autenticação)
-app.post('/api/upload', basicAuth, async (req, res) => {
+// Criar novo produto
+app.post('/api/produtos', basicAuth, async (req, res) => {
   try {
-    const { image } = req.body;
-    if (!image) {
-      return res.status(400).json({ error: 'Nenhuma imagem fornecida' });
+    const database = await connectDB();
+    const { nome, categoria, descricao, preco, precoPromocional, disponivel, adicionais, image } = req.body;
+    
+    let imageUrl = '';
+    if (image) {
+      const uploadResult = await cloudinary.uploader.upload(image, {
+        folder: 'sanduiche-chefe'
+      });
+      imageUrl = uploadResult.secure_url;
     }
-    const result = await cloudinary.uploader.upload(image, {
-      folder: 'sanduiche-chefe'
-    });
-    res.json(result);
+
+    const novoProduto = {
+      nome,
+      categoria,
+      descricao: descricao || '',
+      preco: parseFloat(preco),
+      precoPromocional: precoPromocional ? parseFloat(precoPromocional) : null,
+      disponivel: disponivel === 'true' || disponivel === true,
+      adicionais: adicionais ? JSON.parse(adicionais) : [],
+      imagem: imageUrl,
+      createdAt: new Date()
+    };
+
+    const result = await database.collection('produtos').insertOne(novoProduto);
+    res.status(201).json({ ...novoProduto, _id: result.insertedId });
   } catch (error) {
-    console.error('Erro ao fazer upload da imagem:', error);
-    res.status(500).json({ error: 'Erro ao fazer upload da imagem', details: error.message });
+    console.error('Erro ao criar produto:', error);
+    res.status(500).json({ error: 'Erro ao criar produto', details: error.message });
+  }
+});
+
+// Atualizar produto
+app.put('/api/produtos/:id', basicAuth, async (req, res) => {
+  try {
+    const database = await connectDB();
+    const { id } = req.params;
+    const { nome, categoria, descricao, preco, precoPromocional, disponivel, adicionais, image } = req.body;
+    
+    let imageUrl = '';
+    if (image) {
+      const uploadResult = await cloudinary.uploader.upload(image, {
+        folder: 'sanduiche-chefe'
+      });
+      imageUrl = uploadResult.secure_url;
+    }
+
+    const updateData = {
+      nome,
+      categoria,
+      descricao: descricao || '',
+      preco: parseFloat(preco),
+      precoPromocional: precoPromocional ? parseFloat(precoPromocional) : null,
+      disponivel: disponivel === 'true' || disponivel === true,
+      adicionais: adicionais ? JSON.parse(adicionais) : [],
+      updatedAt: new Date()
+    };
+
+    if (imageUrl) {
+      updateData.imagem = imageUrl;
+    }
+
+    const result = await database.collection('produtos').updateOne(
+      { _id: new ObjectId(id) },
+      { $set: updateData }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: 'Produto não encontrado' });
+    }
+
+    res.json({ ...updateData, _id: id });
+  } catch (error) {
+    console.error('Erro ao atualizar produto:', error);
+    res.status(500).json({ error: 'Erro ao atualizar produto', details: error.message });
+  }
+});
+
+// Deletar produto
+app.delete('/api/produtos/:id', basicAuth, async (req, res) => {
+  try {
+    const database = await connectDB();
+    const { id } = req.params;
+    
+    const result = await database.collection('produtos').deleteOne({ _id: new ObjectId(id) });
+    
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'Produto não encontrado' });
+    }
+
+    res.status(204).send();
+  } catch (error) {
+    console.error('Erro ao deletar produto:', error);
+    res.status(500).json({ error: 'Erro ao deletar produto', details: error.message });
   }
 });
 

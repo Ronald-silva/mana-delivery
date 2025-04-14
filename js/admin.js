@@ -1,24 +1,31 @@
 let produtos = [];
+const API_URL = 'https://sanduiche-do-chefe.vercel.app';
+
+// Função auxiliar para fazer requisições autenticadas
+async function fetchAuth(url, options = {}) {
+    const credentials = btoa(`${process.env.ADMIN_USER}:${process.env.ADMIN_PASSWORD}`);
+    const headers = {
+        'Authorization': `Basic ${credentials}`,
+        ...options.headers
+    };
+    return fetch(url, { ...options, headers });
+}
 
 // Carregar produtos ao abrir a página
-function carregarProdutos() {
+async function carregarProdutos() {
     console.log('Carregando produtos...');
-    fetch('http://localhost:3000/produtos')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Erro ao carregar produtos: ${response.status} - ${response.statusText}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            produtos = data;
-            console.log('Produtos carregados:', produtos);
-            exibirProdutos();
-        })
-        .catch(error => {
-            console.error('Erro ao carregar produtos:', error);
-            alert('Não foi possível carregar os produtos. Verifique o console para mais detalhes.');
-        });
+    try {
+        const response = await fetch(`${API_URL}/api/produtos`);
+        if (!response.ok) {
+            throw new Error(`Erro ao carregar produtos: ${response.status} - ${response.statusText}`);
+        }
+        produtos = await response.json();
+        console.log('Produtos carregados:', produtos);
+        exibirProdutos();
+    } catch (error) {
+        console.error('Erro ao carregar produtos:', error);
+        alert('Não foi possível carregar os produtos. Verifique o console para mais detalhes.');
+    }
 }
 
 // Exibir produtos na lista
@@ -28,12 +35,12 @@ function exibirProdutos() {
     produtos.forEach(produto => {
         const div = document.createElement('div');
         div.className = 'produto-item';
-        const precoExibido = produto.precoPromocional ? produto.precoPromocional : produto.preco;
+        const precoExibido = produto.precoPromocional || produto.preco;
         div.innerHTML = `
             <span>${produto.nome} (${produto.categoria}) - R$ ${precoExibido.toFixed(2)} ${produto.disponivel ? '' : '(Indisponível)'}</span>
             <div>
-                <button onclick="editarProduto(${produto.id})">Editar</button>
-                <button class="remover" onclick="removerProduto(${produto.id})">Remover</button>
+                <button onclick="editarProduto('${produto._id}')">Editar</button>
+                <button class="remover" onclick="removerProduto('${produto._id}')">Remover</button>
             </div>
         `;
         lista.appendChild(div);
@@ -41,7 +48,7 @@ function exibirProdutos() {
 }
 
 // Pré-visualizar a imagem selecionada e validar
-document.getElementById('produto-imagem').addEventListener('change', function(event) {
+document.getElementById('produto-imagem').addEventListener('change', async function(event) {
     const file = event.target.files[0];
     const preview = document.getElementById('imagem-preview');
     const removerBtn = document.getElementById('remover-imagem');
@@ -66,19 +73,31 @@ document.getElementById('produto-imagem').addEventListener('change', function(ev
             return;
         }
 
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            preview.src = e.target.result;
+        try {
+            const base64 = await convertToBase64(file);
+            preview.src = base64;
             preview.style.display = 'block';
             removerBtn.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
+        } catch (error) {
+            console.error('Erro ao converter imagem:', error);
+            alert('Erro ao processar a imagem.');
+        }
     } else {
         preview.src = '';
         preview.style.display = 'none';
         removerBtn.style.display = 'none';
     }
 });
+
+// Converter arquivo para Base64
+function convertToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+    });
+}
 
 // Remover a imagem selecionada
 function removerImagem() {
@@ -92,7 +111,7 @@ function removerImagem() {
 }
 
 // Salvar ou atualizar produto
-function salvarProduto() {
+async function salvarProduto() {
     const id = document.getElementById('produto-id').value;
     const nome = document.getElementById('produto-nome').value;
     const categoria = document.getElementById('produto-categoria').value;
@@ -101,7 +120,7 @@ function salvarProduto() {
     const precoPromocional = document.getElementById('produto-preco-promocional').value ? parseFloat(document.getElementById('produto-preco-promocional').value) : null;
     const disponivel = document.getElementById('produto-disponivel').checked;
     const adicionaisInput = document.getElementById('produto-adicionais').value;
-    const imagemInput = document.getElementById('produto-imagem');
+    const preview = document.getElementById('imagem-preview');
     const salvarBtn = document.getElementById('salvar-btn');
     const uploadStatus = document.getElementById('upload-status');
 
@@ -129,89 +148,95 @@ function salvarProduto() {
     salvarBtn.textContent = 'Salvando...';
     uploadStatus.style.display = 'block';
 
-    const formData = new FormData();
-    formData.append('nome', nome);
-    formData.append('categoria', categoria);
-    formData.append('descricao', descricao || '');
-    formData.append('preco', preco);
-    formData.append('precoPromocional', precoPromocional || '');
-    formData.append('disponivel', disponivel);
-    formData.append('adicionais', JSON.stringify(adicionais));
-    if (imagemInput.files[0]) {
-        formData.append('imagem', imagemInput.files[0]);
-    } else if (id) {
-        const produto = produtos.find(p => p.id == id);
-        formData.append('imagem', produto.imagem);
-    }
+    try {
+        const produtoData = {
+            nome,
+            categoria,
+            descricao,
+            preco,
+            precoPromocional,
+            disponivel,
+            adicionais,
+            image: preview.src || null
+        };
 
-    const url = id ? `http://localhost:3000/produtos/${id}` : 'http://localhost:3000/produtos';
-    const method = id ? 'PUT' : 'POST';
+        const url = id ? `${API_URL}/api/produtos/${id}` : `${API_URL}/api/produtos`;
+        const method = id ? 'PUT' : 'POST';
 
-    console.log('Enviando requisição para:', url);
-    console.log('Método:', method);
-    console.log('Dados enviados:', [...formData.entries()]);
+        const response = await fetchAuth(url, {
+            method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(produtoData)
+        });
 
-    fetch(url, {
-        method: method,
-        body: formData
-    })
-    .then(response => {
         if (!response.ok) {
             throw new Error(`Erro ao salvar produto: ${response.status} - ${response.statusText}`);
         }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Resposta do servidor:', data);
+
+        const data = await response.json();
+        console.log('Produto salvo:', data);
         alert(id ? 'Produto atualizado com sucesso!' : 'Produto adicionado com sucesso!');
         limparFormulario();
-        carregarProdutos();
-    })
-    .catch(error => {
+        await carregarProdutos();
+    } catch (error) {
         console.error('Erro ao salvar produto:', error);
         alert('Erro ao salvar produto. Verifique o console para mais detalhes.');
-    })
-    .finally(() => {
+    } finally {
         salvarBtn.disabled = false;
         salvarBtn.textContent = 'Salvar Produto';
         uploadStatus.style.display = 'none';
-    });
+    }
 }
 
 // Editar produto
 function editarProduto(id) {
-    const produto = produtos.find(p => p.id === id);
-    document.getElementById('produto-id').value = produto.id;
+    const produto = produtos.find(p => p._id === id);
+    if (!produto) {
+        console.error('Produto não encontrado:', id);
+        return;
+    }
+
+    document.getElementById('produto-id').value = produto._id;
     document.getElementById('produto-nome').value = produto.nome;
     document.getElementById('produto-categoria').value = produto.categoria;
-    document.getElementById('produto-descricao').value = produto.descricao;
+    document.getElementById('produto-descricao').value = produto.descricao || '';
     document.getElementById('produto-preco').value = produto.preco;
     document.getElementById('produto-preco-promocional').value = produto.precoPromocional || '';
     document.getElementById('produto-disponivel').checked = produto.disponivel;
-    document.getElementById('produto-adicionais').value = produto.adicionais && produto.adicionais.length > 0 ? produto.adicionais.map(a => `${a.nome} - ${a.preco}`).join(', ') : '';
+    document.getElementById('produto-adicionais').value = produto.adicionais && produto.adicionais.length > 0 ? 
+        produto.adicionais.map(a => `${a.nome} - ${a.preco}`).join(', ') : '';
+    
     const preview = document.getElementById('imagem-preview');
     const removerBtn = document.getElementById('remover-imagem');
-    preview.src = produto.imagem;
-    preview.style.display = 'block';
-    removerBtn.style.display = 'block';
+    if (produto.imagem) {
+        preview.src = produto.imagem;
+        preview.style.display = 'block';
+        removerBtn.style.display = 'block';
+    }
 }
 
 // Remover produto
-function removerProduto(id) {
-    if (confirm('Tem certeza que deseja remover este produto?')) {
-        fetch(`http://localhost:3000/produtos/${id}`, {
+async function removerProduto(id) {
+    if (!confirm('Tem certeza que deseja remover este produto?')) {
+        return;
+    }
+
+    try {
+        const response = await fetchAuth(`${API_URL}/api/produtos/${id}`, {
             method: 'DELETE'
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erro ao remover produto: ' + response.statusText);
-            }
-            carregarProdutos();
-        })
-        .catch(error => {
-            console.error('Erro ao remover produto:', error);
-            alert('Erro ao remover produto. Verifique o console para mais detalhes.');
         });
+
+        if (!response.ok) {
+            throw new Error('Erro ao remover produto: ' + response.statusText);
+        }
+
+        alert('Produto removido com sucesso!');
+        await carregarProdutos();
+    } catch (error) {
+        console.error('Erro ao remover produto:', error);
+        alert('Erro ao remover produto. Verifique o console para mais detalhes.');
     }
 }
 
@@ -235,6 +260,3 @@ function limparFormulario() {
 
 // Carregar produtos ao abrir a página
 document.addEventListener('DOMContentLoaded', carregarProdutos);
-
-// Substitua todas as instâncias de localhost:3000 pela URL do Vercel
-const API_URL = 'https://sanduiche-do-chefe.vercel.app';
