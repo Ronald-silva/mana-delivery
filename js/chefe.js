@@ -2,63 +2,64 @@ let cartItems = [];
 let total = 0;
 
 // Função para carregar os produtos do servidor
-function carregarProdutos() {
-    const timestamp = new Date().getTime();
-    fetch(`http://localhost:3000/produtos?_=${timestamp}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erro ao carregar produtos: ' + response.statusText);
+// Atualizar a URL da API
+const API_URL = 'https://sanduiche-do-chefe-6yrfse9uj-ronalds-projects.vercel.app';
+
+async function carregarProdutos() {
+    try {
+        const timestamp = new Date().getTime();
+        const response = await fetch(`${API_URL}/produtos?_=${timestamp}`);
+        if (!response.ok) {
+            throw new Error('Erro ao carregar produtos: ' + response.statusText);
+        }
+        const produtos = await response.json();
+        
+        // Filtrar apenas produtos disponíveis
+        const produtosDisponiveis = produtos.filter(produto => produto.disponivel);
+
+        // Agrupar produtos por categoria
+        const produtosPorCategoria = produtosDisponiveis.reduce((acc, produto) => {
+            if (!acc[produto.categoria]) {
+                acc[produto.categoria] = [];
             }
-            return response.json();
-        })
-        .then(produtos => {
-            // Filtrar apenas produtos disponíveis
-            const produtosDisponiveis = produtos.filter(produto => produto.disponivel);
+            acc[produto.categoria].push(produto);
+            return acc;
+        }, {});
 
-            // Agrupar produtos por categoria
-            const produtosPorCategoria = produtosDisponiveis.reduce((acc, produto) => {
-                if (!acc[produto.categoria]) {
-                    acc[produto.categoria] = [];
-                }
-                acc[produto.categoria].push(produto);
-                return acc;
-            }, {});
+        const menuDiv = document.getElementById('menu');
+        menuDiv.innerHTML = '';
 
-            const menuDiv = document.getElementById('menu');
-            menuDiv.innerHTML = '';
+        // Exibir produtos por categoria
+        for (const categoria in produtosPorCategoria) {
+            const categoriaDiv = document.createElement('div');
+            categoriaDiv.className = 'categoria-section';
+            categoriaDiv.innerHTML = `<h2>${categoria}</h2>`;
+            const produtosDiv = document.createElement('div');
+            produtosDiv.className = 'categoria-produtos';
 
-            // Exibir produtos por categoria
-            for (const categoria in produtosPorCategoria) {
-                const categoriaDiv = document.createElement('div');
-                categoriaDiv.className = 'categoria-section';
-                categoriaDiv.innerHTML = `<h2>${categoria}</h2>`;
-                const produtosDiv = document.createElement('div');
-                produtosDiv.className = 'categoria-produtos';
+            produtosPorCategoria[categoria].forEach(produto => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'menu-item';
+                const precoExibido = produto.precoPromocional || produto.preco;
+                itemDiv.innerHTML = `
+                    <img src="${produto.imagem}" alt="${produto.nome}">
+                    <div>
+                        <h3>${produto.nome}</h3>
+                        <p>${produto.descricao}</p>
+                        <p>Preço: R$ ${precoExibido.toFixed(2)}</p>
+                        <button onclick="addToCart('${produto.nome}', ${precoExibido})">Adicionar ao Carrinho</button>
+                    </div>
+                `;
+                produtosDiv.appendChild(itemDiv);
+            });
 
-                produtosPorCategoria[categoria].forEach(produto => {
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = 'menu-item';
-                    const precoExibido = produto.precoPromocional || produto.preco;
-                    itemDiv.innerHTML = `
-                        <img src="${produto.imagem}" alt="${produto.nome}">
-                        <div>
-                            <h3>${produto.nome}</h3>
-                            <p>${produto.descricao}</p>
-                            <p>Preço: R$ ${precoExibido.toFixed(2)}</p>
-                            <button onclick="addToCart('${produto.nome}', ${precoExibido})">Adicionar ao Carrinho</button>
-                        </div>
-                    `;
-                    produtosDiv.appendChild(itemDiv);
-                });
-
-                categoriaDiv.appendChild(produtosDiv);
-                menuDiv.appendChild(categoriaDiv);
-            }
-        })
-        .catch(error => {
-            console.error('Erro ao carregar produtos:', error);
-            alert('Não foi possível carregar o menu. Verifique se o servidor está rodando.');
-        });
+            categoriaDiv.appendChild(produtosDiv);
+            menuDiv.appendChild(categoriaDiv);
+        }
+    } catch (error) {
+        console.error('Erro ao carregar produtos:', error);
+        alert('Não foi possível carregar o menu. Verifique se o servidor está rodando.');
+    }
 }
 
 // Função para adicionar ao carrinho

@@ -11,7 +11,7 @@ const app = express();
 
 // Update CORS configuration
 app.use(cors({
-    origin: ['http://127.0.0.1:5500', 'http://localhost:5500', 'https://sanduiche-do-chefe.vercel.app'],
+    origin: ['http://127.0.0.1:5500', 'http://localhost:5500', 'https://sanduiche-do-chefe-6yrfse9uj-ronalds-projects.vercel.app'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 }));
