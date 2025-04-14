@@ -3,7 +3,7 @@ const API_URL = 'https://sanduiche-do-chefe.vercel.app';
 
 // Função auxiliar para fazer requisições autenticadas
 async function fetchAuth(url, options = {}) {
-    const credentials = btoa(`${process.env.ADMIN_USER}:${process.env.ADMIN_PASSWORD}`);
+    const credentials = btoa('admin:admin123'); // Credenciais fixas para demonstração
     const headers = {
         'Authorization': `Basic ${credentials}`,
         ...options.headers
