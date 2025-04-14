@@ -41,9 +41,35 @@ async function connectDB() {
   return db;
 }
 
+// Middleware de autenticação básica
+const basicAuth = (req, res, next) => {
+  const auth = req.headers.authorization;
+
+  if (!auth || auth.indexOf('Basic ') === -1) {
+    res.setHeader('WWW-Authenticate', 'Basic realm="Admin Access"');
+    return res.status(401).json({ message: 'Autenticação necessária' });
+  }
+
+  const base64Credentials = auth.split(' ')[1];
+  const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
+  const [username, password] = credentials.split(':');
+
+  if (username === process.env.ADMIN_USER && password === process.env.ADMIN_PASSWORD) {
+    next();
+  } else {
+    res.setHeader('WWW-Authenticate', 'Basic realm="Admin Access"');
+    return res.status(401).json({ message: 'Credenciais inválidas' });
+  }
+};
+
 // Rotas
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../index.html'));
+});
+
+// Rota para a página admin com autenticação
+app.get('/admin', basicAuth, (req, res) => {
+  res.sendFile(path.join(__dirname, '../admin.html'));
 });
 
 // API para produtos
@@ -58,8 +84,8 @@ app.get('/api/produtos', async (req, res) => {
   }
 });
 
-// API para upload de imagens
-app.post('/api/upload', async (req, res) => {
+// API para upload de imagens (com autenticação)
+app.post('/api/upload', basicAuth, async (req, res) => {
   try {
     const { image } = req.body;
     if (!image) {
