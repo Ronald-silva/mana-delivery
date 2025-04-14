@@ -4,13 +4,14 @@ const { MongoClient } = require('mongodb');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
+const cloudinary = require('cloudinary').v2;
 require('dotenv').config();
 
 const app = express();
 
 // Update CORS configuration
 app.use(cors({
-    origin: ['http://127.0.0.1:5500', 'http://localhost:5500'],
+    origin: ['http://127.0.0.1:5500', 'http://localhost:5500', 'https://sanduiche-do-chefe.vercel.app'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 }));
@@ -69,12 +70,25 @@ app.get('/produtos', async (req, res) => {
     }
 });
 
+// Configuração do Cloudinary (adicionar após os imports)
+cloudinary.config({
+    cloud_name: 'dciji3ef9',
+    api_key: '223943765953787',
+    api_secret: 'EayQvmSktOjzuWKWUI74VL5H_QY'
+});
+
+// Modificar a rota POST para usar o Cloudinary
 app.post('/produtos', upload.single('imagem'), async (req, res) => {
     try {
         const { nome, categoria, descricao, preco, precoPromocional, disponivel, adicionais } = req.body;
-        const imagem = req.file ? `img/${req.file.filename}` : 'img/6.webp';
+        let imageUrl = 'img/6.webp';
 
-        console.log('Dados recebidos no POST:', req.body);
+        if (req.file) {
+            const result = await cloudinary.uploader.upload(req.file.path);
+            imageUrl = result.secure_url;
+            // Remover o arquivo temporário após upload
+            fs.unlinkSync(req.file.path);
+        }
 
         const produtos = await produtosCollection.find().toArray();
         const novoProduto = {
@@ -86,7 +100,7 @@ app.post('/produtos', upload.single('imagem'), async (req, res) => {
             precoPromocional: precoPromocional ? parseFloat(precoPromocional) : null,
             disponivel: disponivel === 'true',
             adicionais: adicionais ? JSON.parse(adicionais) : [],
-            imagem
+            imagem: imageUrl
         };
         await produtosCollection.insertOne(novoProduto);
         res.status(201).json(novoProduto);
@@ -96,13 +110,19 @@ app.post('/produtos', upload.single('imagem'), async (req, res) => {
     }
 });
 
+// Modificar a rota PUT também
 app.put('/produtos/:id', upload.single('imagem'), async (req, res) => {
     try {
         const id = parseInt(req.params.id);
         const { nome, categoria, descricao, preco, precoPromocional, disponivel, adicionais } = req.body;
-        const imagem = req.file ? `img/${req.file.filename}` : req.body.imagem;
+        let imagem = req.body.imagem;
 
-        console.log('Dados recebidos no PUT:', req.body);
+        if (req.file) {
+            const result = await cloudinary.uploader.upload(req.file.path);
+            imagem = result.secure_url;
+            // Remover o arquivo temporário após upload
+            fs.unlinkSync(req.file.path);
+        }
 
         const produtoAtualizado = {
             id,
@@ -145,7 +165,8 @@ app.delete('/produtos/:id', async (req, res) => {
     }
 });
 
+// Update port configuration
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
 });

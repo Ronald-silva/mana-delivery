@@ -235,3 +235,6 @@ function limparFormulario() {
 
 // Carregar produtos ao abrir a página
 document.addEventListener('DOMContentLoaded', carregarProdutos);
+
+// Substitua todas as instâncias de localhost:3000 pela URL do Vercel
+const API_URL = 'https://sanduiche-do-chefe.vercel.app';
