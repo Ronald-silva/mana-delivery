@@ -20,9 +20,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Configurar o MongoDB
-const uri = process.env.MONGODB_URI; // Using the connection string from .env
-const client = new MongoClient(uri);
-let produtosCollection;
+const uri = process.env.MONGODB_URI;
+const client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverApi: {
+        version: '1',
+        strict: true,
+        deprecationErrors: true,
+    }
+});
 
 async function connectToMongo() {
     try {
@@ -32,6 +39,7 @@ async function connectToMongo() {
         produtosCollection = db.collection('produtos');
     } catch (error) {
         console.error('Erro ao conectar ao MongoDB:', error);
+        throw error; // Propagar o erro para tratamento adequado
     }
 }
 

@@ -3,7 +3,7 @@ let total = 0;
 
 // Função para carregar os produtos do servidor
 // Atualizar a URL da API
-const API_URL = 'https://sanduiche-do-chefe-6yrfse9uj-ronalds-projects.vercel.app';
+const API_URL = 'https://sanduiche-chefe.vercel.app';
 
 async function carregarProdutos() {
     try {
