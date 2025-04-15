@@ -41,8 +41,12 @@ app.use((req, res, next) => {
 let db;
 const mongoClient = new MongoClient(process.env.MONGODB_URI, {
   serverSelectionTimeoutMS: 5000,
-  socketTimeoutMS: 10000,
-  connectTimeoutMS: 10000
+  socketTimeoutMS: 30000,
+  connectTimeoutMS: 30000,
+  ssl: true,
+  sslValidate: true,
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 });
 
 // Conectar ao MongoDB no início
@@ -110,24 +114,47 @@ app.get('/api/produtos', async (req, res) => {
 // Criar novo produto
 app.post('/api/produtos', basicAuth, async (req, res) => {
   try {
-    const { nome, categoria, descricao, preco } = req.body;
+    console.log('Iniciando criação de produto:', req.body);
+    const { nome, categoria, descricao, preco, precoPromocional, disponivel, adicionais, image } = req.body;
     
     if (!nome || !categoria || !preco) {
+      console.log('Campos obrigatórios faltando');
       return res.status(400).json({ error: 'Campos obrigatórios faltando' });
     }
 
     const database = await getDB();
+    console.log('Conexão com banco estabelecida');
     
+    let imageUrl = '';
+    if (image) {
+      console.log('Iniciando upload de imagem');
+      try {
+        const uploadResult = await cloudinary.uploader.upload(image, {
+          folder: 'sanduiche-chefe'
+        });
+        imageUrl = uploadResult.secure_url;
+        console.log('Imagem enviada com sucesso:', imageUrl);
+      } catch (uploadError) {
+        console.error('Erro no upload da imagem:', uploadError);
+        // Continua sem a imagem em caso de erro
+      }
+    }
+
     const novoProduto = {
       nome: nome.trim(),
       categoria: categoria.trim(),
       descricao: descricao ? descricao.trim() : '',
       preco: parseFloat(preco),
-      disponivel: true,
+      precoPromocional: precoPromocional ? parseFloat(precoPromocional) : null,
+      disponivel: disponivel === 'true' || disponivel === true,
+      adicionais: adicionais ? JSON.parse(adicionais) : [],
+      imagem: imageUrl,
       createdAt: new Date()
     };
 
+    console.log('Tentando salvar produto:', novoProduto);
     const result = await database.collection('produtos').insertOne(novoProduto);
+    console.log('Produto salvo com sucesso');
     
     return res.status(201).json({ 
       success: true,
@@ -135,10 +162,11 @@ app.post('/api/produtos', basicAuth, async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Erro ao criar produto:', error);
+    console.error('Erro detalhado ao criar produto:', error);
     return res.status(500).json({ 
       error: 'Erro ao criar produto',
-      message: error.message 
+      message: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 });
