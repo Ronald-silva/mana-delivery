@@ -124,7 +124,7 @@ async function salvarProduto() {
     const salvarBtn = document.getElementById('salvar-btn');
     const uploadStatus = document.getElementById('upload-status');
 
-    // Validação básica dos campos obrigatórios
+    // Validação básica
     if (!nome) {
         alert('Por favor, preencha o nome do produto.');
         return;
@@ -144,8 +144,8 @@ async function salvarProduto() {
         try {
             adicionais = adicionaisInput.split(',').map(item => {
                 const [nome, preco] = item.trim().split('-').map(str => str.trim());
-                if (!nome || !preco) throw new Error('Formato inválido');
-                return { nome, preco: parseFloat(preco) || 0 };
+                if (!nome || !preco || isNaN(preco)) throw new Error('Formato inválido');
+                return { nome, preco: parseFloat(preco) };
             });
         } catch (error) {
             alert('Formato inválido para adicionais. Use: Nome - Preço, separados por vírgula (ex.: Bacon - 3.00, Queijo Extra - 2.00).');
@@ -185,12 +185,12 @@ async function salvarProduto() {
             body: JSON.stringify(produtoData)
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || `Erro ${response.status}: ${response.statusText}`);
+            throw new Error(data.error || data.message || 'Erro ao salvar produto');
         }
 
-        const data = await response.json();
         console.log('Produto salvo:', data);
         alert(id ? 'Produto atualizado com sucesso!' : 'Produto adicionado com sucesso!');
         limparFormulario();

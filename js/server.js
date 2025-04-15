@@ -65,22 +65,25 @@ async function connectDB() {
 
 // Middleware de autenticação básica
 const basicAuth = (req, res, next) => {
-  const auth = req.headers.authorization;
+  try {
+    const auth = req.headers.authorization;
 
-  if (!auth || auth.indexOf('Basic ') === -1) {
-    res.setHeader('WWW-Authenticate', 'Basic realm="Admin Access"');
-    return res.status(401).json({ message: 'Autenticação necessária' });
-  }
+    if (!auth || !auth.startsWith('Basic ')) {
+      return res.status(401).json({ error: 'Autenticação necessária' });
+    }
 
-  const base64Credentials = auth.split(' ')[1];
-  const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
-  const [username, password] = credentials.split(':');
+    const base64Credentials = auth.split(' ')[1];
+    const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
+    const [username, password] = credentials.split(':');
 
-  if (username === process.env.ADMIN_USER && password === process.env.ADMIN_PASSWORD) {
-    next();
-  } else {
-    res.setHeader('WWW-Authenticate', 'Basic realm="Admin Access"');
-    return res.status(401).json({ message: 'Credenciais inválidas' });
+    if (username === 'admin' && password === 'admin123') {
+      next();
+    } else {
+      return res.status(401).json({ error: 'Credenciais inválidas' });
+    }
+  } catch (error) {
+    console.error('Erro na autenticação:', error);
+    return res.status(500).json({ error: 'Erro interno na autenticação' });
   }
 };
 
@@ -114,11 +117,11 @@ app.post('/api/produtos', basicAuth, async (req, res) => {
     
     // Validação mais detalhada dos campos
     if (!nome || typeof nome !== 'string' || nome.trim().length === 0) {
-      return res.status(400).json({ error: 'Nome do produto é obrigatório e deve ser uma string válida' });
+      return res.status(400).json({ error: 'Nome do produto é obrigatório' });
     }
     
     if (!categoria || typeof categoria !== 'string' || categoria.trim().length === 0) {
-      return res.status(400).json({ error: 'Categoria é obrigatória e deve ser uma string válida' });
+      return res.status(400).json({ error: 'Categoria é obrigatória' });
     }
     
     if (!preco || isNaN(preco) || parseFloat(preco) <= 0) {
@@ -135,7 +138,6 @@ app.post('/api/produtos', basicAuth, async (req, res) => {
         imageUrl = uploadResult.secure_url;
       } catch (uploadError) {
         console.error('Erro no upload da imagem:', uploadError);
-        // Não retornamos erro aqui, apenas continuamos sem a imagem
       }
     }
 
@@ -145,20 +147,28 @@ app.post('/api/produtos', basicAuth, async (req, res) => {
       descricao: descricao ? descricao.trim() : '',
       preco: parseFloat(preco),
       precoPromocional: precoPromocional ? parseFloat(precoPromocional) : null,
-      disponivel: disponivel === 'true' || disponivel === true,
+      disponivel: disponivel === true,
       adicionais: Array.isArray(adicionais) ? adicionais : [],
       imagem: imageUrl,
       createdAt: new Date()
     };
 
     const result = await database.collection('produtos').insertOne(novoProduto);
-    res.status(201).json({ ...novoProduto, _id: result.insertedId });
+    
+    if (!result.acknowledged) {
+      throw new Error('Falha ao inserir o produto no banco de dados');
+    }
+
+    return res.status(201).json({ 
+      ...novoProduto, 
+      _id: result.insertedId 
+    });
+
   } catch (error) {
     console.error('Erro ao criar produto:', error);
-    res.status(500).json({ 
-      error: 'Erro ao criar produto', 
-      details: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    return res.status(500).json({ 
+      error: 'Erro ao criar produto',
+      message: error.message
     });
   }
 });
