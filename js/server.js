@@ -41,19 +41,22 @@ app.use((req, res, next) => {
 let db;
 const mongoClient = new MongoClient(process.env.MONGODB_URI, {
   serverSelectionTimeoutMS: 5000,
-  socketTimeoutMS: 30000,
+  socketTimeoutMS: 10000,
+  connectTimeoutMS: 10000
 });
 
-async function connectDB() {
+// Conectar ao MongoDB no início
+mongoClient.connect().then(() => {
+  db = mongoClient.db('sanduiche-do-chefe');
+  console.log('Conectado ao MongoDB');
+}).catch(error => {
+  console.error('Erro ao conectar ao MongoDB:', error);
+});
+
+async function getDB() {
   if (!db) {
-    try {
-      await mongoClient.connect();
-      db = mongoClient.db('sanduiche-do-chefe');
-      console.log('Conectado ao MongoDB');
-    } catch (error) {
-      console.error('Erro ao conectar ao MongoDB:', error);
-      throw error;
-    }
+    await mongoClient.connect();
+    db = mongoClient.db('sanduiche-do-chefe');
   }
   return db;
 }
@@ -95,7 +98,7 @@ app.get('/admin', basicAuth, (req, res) => {
 // API para produtos
 app.get('/api/produtos', async (req, res) => {
   try {
-    const database = await connectDB();
+    const database = await getDB();
     const produtos = await database.collection('produtos').find().toArray();
     res.json(produtos);
   } catch (error) {
@@ -113,7 +116,7 @@ app.post('/api/produtos', basicAuth, async (req, res) => {
       return res.status(400).json({ error: 'Campos obrigatórios faltando' });
     }
 
-    const database = await connectDB();
+    const database = await getDB();
     
     const novoProduto = {
       nome: nome.trim(),
@@ -143,7 +146,7 @@ app.post('/api/produtos', basicAuth, async (req, res) => {
 // Atualizar produto
 app.put('/api/produtos/:id', basicAuth, async (req, res) => {
   try {
-    const database = await connectDB();
+    const database = await getDB();
     const { id } = req.params;
     const { nome, categoria, descricao, preco, precoPromocional, disponivel, adicionais, image } = req.body;
     
@@ -189,7 +192,7 @@ app.put('/api/produtos/:id', basicAuth, async (req, res) => {
 // Deletar produto
 app.delete('/api/produtos/:id', basicAuth, async (req, res) => {
   try {
-    const database = await connectDB();
+    const database = await getDB();
     const { id } = req.params;
     
     const result = await database.collection('produtos').deleteOne({ _id: new ObjectId(id) });

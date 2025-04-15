@@ -3,7 +3,7 @@ const API_URL = window.location.origin;
 
 // Função auxiliar para fazer requisições autenticadas
 async function fetchAuth(url, options = {}) {
-    const credentials = btoa('admin:admin123'); // Credenciais fixas para demonstração
+    const credentials = btoa('admin:admin123');
     const headers = {
         'Authorization': `Basic ${credentials}`,
         ...options.headers
