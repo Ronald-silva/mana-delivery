@@ -19,7 +19,12 @@ cloudinary.config({
 const app = express();
 
 // Middleware com limites aumentados
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5500', 'http://127.0.0.1:5500', 'https://sanduiche-chefe.vercel.app'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.static(path.join(__dirname, '../')));
@@ -34,7 +39,15 @@ app.use((req, res, next) => {
 
 // Conexão com MongoDB
 let db;
-const mongoClient = new MongoClient(process.env.MONGODB_URI);
+const mongoClient = new MongoClient(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverApi: {
+    version: '1',
+    strict: true,
+    deprecationErrors: true,
+  }
+});
 
 async function connectDB() {
   if (!db) {
@@ -99,8 +112,17 @@ app.post('/api/produtos', basicAuth, async (req, res) => {
     const database = await connectDB();
     const { nome, categoria, descricao, preco, precoPromocional, disponivel, adicionais, image } = req.body;
     
-    if (!nome || !categoria || !preco) {
-      return res.status(400).json({ error: 'Campos obrigatórios faltando' });
+    // Validação mais detalhada dos campos
+    if (!nome || typeof nome !== 'string' || nome.trim().length === 0) {
+      return res.status(400).json({ error: 'Nome do produto é obrigatório e deve ser uma string válida' });
+    }
+    
+    if (!categoria || typeof categoria !== 'string' || categoria.trim().length === 0) {
+      return res.status(400).json({ error: 'Categoria é obrigatória e deve ser uma string válida' });
+    }
+    
+    if (!preco || isNaN(preco) || parseFloat(preco) <= 0) {
+      return res.status(400).json({ error: 'Preço é obrigatório e deve ser um número positivo' });
     }
 
     let imageUrl = '';
@@ -113,14 +135,14 @@ app.post('/api/produtos', basicAuth, async (req, res) => {
         imageUrl = uploadResult.secure_url;
       } catch (uploadError) {
         console.error('Erro no upload da imagem:', uploadError);
-        return res.status(500).json({ error: 'Erro no upload da imagem', details: uploadError.message });
+        // Não retornamos erro aqui, apenas continuamos sem a imagem
       }
     }
 
     const novoProduto = {
-      nome,
-      categoria,
-      descricao: descricao || '',
+      nome: nome.trim(),
+      categoria: categoria.trim(),
+      descricao: descricao ? descricao.trim() : '',
       preco: parseFloat(preco),
       precoPromocional: precoPromocional ? parseFloat(precoPromocional) : null,
       disponivel: disponivel === 'true' || disponivel === true,
@@ -133,7 +155,11 @@ app.post('/api/produtos', basicAuth, async (req, res) => {
     res.status(201).json({ ...novoProduto, _id: result.insertedId });
   } catch (error) {
     console.error('Erro ao criar produto:', error);
-    res.status(500).json({ error: 'Erro ao criar produto', details: error.message });
+    res.status(500).json({ 
+      error: 'Erro ao criar produto', 
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 });
 
@@ -210,3 +236,12 @@ app.use((err, req, res, next) => {
 
 // Exportar a instância do app para o Vercel
 module.exports = app;
+
+// Iniciar o servidor se não estiver em produção
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+    console.log(`Acesse: http://localhost:${PORT}`);
+  });
+}

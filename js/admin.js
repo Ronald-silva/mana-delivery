@@ -1,5 +1,5 @@
 let produtos = [];
-const API_URL = 'https://sanduiche-do-chefe.vercel.app';
+const API_URL = 'http://localhost:3000';
 
 // Função auxiliar para fazer requisições autenticadas
 async function fetchAuth(url, options = {}) {
@@ -113,19 +113,28 @@ function removerImagem() {
 // Salvar ou atualizar produto
 async function salvarProduto() {
     const id = document.getElementById('produto-id').value;
-    const nome = document.getElementById('produto-nome').value;
+    const nome = document.getElementById('produto-nome').value.trim();
     const categoria = document.getElementById('produto-categoria').value;
-    const descricao = document.getElementById('produto-descricao').value;
-    const preco = parseFloat(document.getElementById('produto-preco').value);
-    const precoPromocional = document.getElementById('produto-preco-promocional').value ? parseFloat(document.getElementById('produto-preco-promocional').value) : null;
+    const descricao = document.getElementById('produto-descricao').value.trim();
+    const preco = document.getElementById('produto-preco').value;
+    const precoPromocional = document.getElementById('produto-preco-promocional').value;
     const disponivel = document.getElementById('produto-disponivel').checked;
-    const adicionaisInput = document.getElementById('produto-adicionais').value;
+    const adicionaisInput = document.getElementById('produto-adicionais').value.trim();
     const preview = document.getElementById('imagem-preview');
     const salvarBtn = document.getElementById('salvar-btn');
     const uploadStatus = document.getElementById('upload-status');
 
-    if (!nome || !preco || !categoria) {
-        alert('Por favor, preencha os campos obrigatórios (nome, categoria e preço).');
+    // Validação básica dos campos obrigatórios
+    if (!nome) {
+        alert('Por favor, preencha o nome do produto.');
+        return;
+    }
+    if (!categoria) {
+        alert('Por favor, selecione uma categoria.');
+        return;
+    }
+    if (!preco || isNaN(preco) || parseFloat(preco) <= 0) {
+        alert('Por favor, insira um preço válido.');
         return;
     }
 
@@ -150,56 +159,20 @@ async function salvarProduto() {
     uploadStatus.textContent = 'Preparando dados...';
 
     try {
-        // Comprimir imagem se necessário
-        let imageData = preview.src || null;
-        if (imageData && imageData.startsWith('data:image')) {
-            uploadStatus.textContent = 'Processando imagem...';
-            // Se a imagem for muito grande, redimensionar
-            const img = new Image();
-            img.src = imageData;
-            await new Promise((resolve) => {
-                img.onload = () => {
-                    if (img.width > 800 || img.height > 800) {
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        const MAX_SIZE = 800;
-                        let width = img.width;
-                        let height = img.height;
-                        
-                        if (width > height) {
-                            if (width > MAX_SIZE) {
-                                height *= MAX_SIZE / width;
-                                width = MAX_SIZE;
-                            }
-                        } else {
-                            if (height > MAX_SIZE) {
-                                width *= MAX_SIZE / height;
-                                height = MAX_SIZE;
-                            }
-                        }
-                        
-                        canvas.width = width;
-                        canvas.height = height;
-                        ctx.drawImage(img, 0, 0, width, height);
-                        imageData = canvas.toDataURL('image/jpeg', 0.8);
-                    }
-                    resolve();
-                };
-            });
-        }
-
-        uploadStatus.textContent = 'Enviando dados...';
-
         const produtoData = {
             nome,
             categoria,
             descricao,
-            preco,
-            precoPromocional,
+            preco: parseFloat(preco),
+            precoPromocional: precoPromocional ? parseFloat(precoPromocional) : null,
             disponivel,
-            adicionais,
-            image: imageData
+            adicionais
         };
+
+        // Adicionar imagem apenas se existir
+        if (preview.src && preview.src.startsWith('data:image')) {
+            produtoData.image = preview.src;
+        }
 
         const url = id ? `${API_URL}/api/produtos/${id}` : `${API_URL}/api/produtos`;
         const method = id ? 'PUT' : 'POST';

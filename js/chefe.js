@@ -1,14 +1,16 @@
 let cart = [];
 let cartTotal = 0;
 
-// Função para carregar os produtos do servidor
-// Atualizar a URL da API
-const API_URL = 'https://sanduiche-chefe.vercel.app';
+// URL da API - usa URL local se estiver em desenvolvimento
+const API_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000'
+    : 'https://sanduiche-chefe.vercel.app';
 
+// Função para carregar os produtos do servidor
 async function carregarProdutos() {
     try {
         const timestamp = new Date().getTime();
-        const response = await fetch(`${API_URL}/produtos?_=${timestamp}`);
+        const response = await fetch(`${API_URL}/api/produtos?_=${timestamp}`);
         if (!response.ok) {
             throw new Error('Erro ao carregar produtos: ' + response.statusText);
         }
