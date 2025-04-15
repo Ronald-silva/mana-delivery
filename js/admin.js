@@ -115,10 +115,9 @@ async function salvarProduto() {
     const nome = document.getElementById('produto-nome').value.trim();
     const categoria = document.getElementById('produto-categoria').value;
     const preco = document.getElementById('produto-preco').value;
+    const descricao = document.getElementById('produto-descricao').value.trim();
+    const disponivel = document.getElementById('produto-disponivel').checked;
     const salvarBtn = document.getElementById('salvar-btn');
-
-    // Log dos dados que serão enviados
-    console.log('Dados a serem enviados:', { nome, categoria, preco });
 
     if (!nome || !categoria || !preco) {
         alert('Por favor, preencha todos os campos obrigatórios.');
@@ -128,48 +127,34 @@ async function salvarProduto() {
     salvarBtn.disabled = true;
     salvarBtn.textContent = 'Salvando...';
 
+    const dadosProduto = {
+        nome,
+        categoria,
+        descricao,
+        preco: parseFloat(preco),
+        disponivel
+    };
+
     try {
-        console.log('Iniciando requisição para:', `${API_URL}/api/produtos`);
-        
         const response = await fetch(`${API_URL}/api/produtos`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Basic ' + btoa('admin:admin123')
             },
-            body: JSON.stringify({
-                nome,
-                categoria,
-                preco: parseFloat(preco)
-            })
+            body: JSON.stringify(dadosProduto)
         });
 
-        console.log('Status da resposta:', response.status);
-        
-        // Tenta ler o corpo da resposta como texto primeiro
-        const responseText = await response.text();
-        console.log('Resposta como texto:', responseText);
-        
-        // Tenta converter para JSON
-        let data;
-        try {
-            data = JSON.parse(responseText);
-        } catch (e) {
-            console.error('Erro ao fazer parse do JSON:', e);
-            throw new Error('Resposta inválida do servidor');
-        }
-
         if (!response.ok) {
-            throw new Error(data.error || 'Erro ao salvar produto');
+            throw new Error('Erro ao salvar produto: ' + response.status);
         }
 
-        console.log('Produto salvo com sucesso:', data);
-        alert('Produto adicionado com sucesso!');
+        alert('Produto salvo com sucesso!');
         limparFormulario();
         await carregarProdutos();
     } catch (error) {
-        console.error('Erro completo:', error);
-        alert('Erro ao salvar produto: ' + error.message);
+        console.error('Erro:', error);
+        alert('Erro ao salvar produto. Por favor, tente novamente.');
     } finally {
         salvarBtn.disabled = false;
         salvarBtn.textContent = 'Salvar Produto';

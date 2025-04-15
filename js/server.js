@@ -142,62 +142,33 @@ app.get('/api/produtos', async (req, res) => {
 // Criar novo produto
 app.post('/api/produtos', basicAuth, async (req, res) => {
   try {
-    console.log('Iniciando criação de produto:', JSON.stringify(req.body));
-    const { nome, categoria, descricao, preco, precoPromocional, disponivel, adicionais } = req.body;
+    const { nome, categoria, descricao, preco, disponivel } = req.body;
     
     if (!nome || !categoria || !preco) {
-      console.log('Campos obrigatórios faltando');
-      return res.status(400).json({ 
-        error: 'Campos obrigatórios faltando',
-        campos: { nome, categoria, preco }
-      });
+      return res.status(400).json({ error: 'Campos obrigatórios faltando' });
     }
 
     const database = await getDB();
-    console.log('Conexão com banco estabelecida');
-
+    
     const novoProduto = {
       nome: String(nome).trim(),
       categoria: String(categoria).trim(),
       descricao: descricao ? String(descricao).trim() : '',
       preco: Number(preco),
-      precoPromocional: precoPromocional ? Number(precoPromocional) : null,
       disponivel: Boolean(disponivel),
-      adicionais: [],
       createdAt: new Date()
     };
 
-    // Tratamento seguro dos adicionais
-    if (adicionais) {
-      try {
-        const adicionaisArray = typeof adicionais === 'string' ? JSON.parse(adicionais) : adicionais;
-        novoProduto.adicionais = Array.isArray(adicionaisArray) ? adicionaisArray : [];
-      } catch (e) {
-        console.error('Erro ao processar adicionais:', e);
-        novoProduto.adicionais = [];
-      }
-    }
-
-    console.log('Tentando salvar produto:', JSON.stringify(novoProduto));
     const result = await database.collection('produtos').insertOne(novoProduto);
-    console.log('Produto salvo com sucesso, ID:', result.insertedId);
     
-    const produtoSalvo = {
-      ...novoProduto,
-      _id: result.insertedId
-    };
-
     return res.status(201).json({ 
       success: true,
-      produto: produtoSalvo
+      produto: { ...novoProduto, _id: result.insertedId }
     });
 
   } catch (error) {
-    console.error('Erro detalhado ao criar produto:', error);
-    return res.status(500).json({ 
-      error: 'Erro ao criar produto',
-      message: error.message
-    });
+    console.error('Erro ao criar produto:', error);
+    return res.status(500).json({ error: 'Erro ao criar produto' });
   }
 });
 
