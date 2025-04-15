@@ -19,15 +19,43 @@ cloudinary.config({
 const app = express();
 
 // Middleware com limites aumentados
-app.use(cors({
-  origin: ['http://localhost:5500', 'http://127.0.0.1:5500', 'https://sanduiche-chefe.vercel.app'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}));
+app.use(cors());  // Permitir todas as origens temporariamente para debug
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.static(path.join(__dirname, '../')));
+
+// Middleware para adicionar headers de CORS em todas as respostas
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Credentials', true);
+  
+  // Responder imediatamente a requisições OPTIONS
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  next();
+});
+
+// Middleware para garantir que todas as respostas sejam JSON válido
+app.use((req, res, next) => {
+  const oldJson = res.json;
+  res.json = function(data) {
+    try {
+      // Tentar fazer parse do JSON antes de enviar
+      JSON.parse(JSON.stringify(data));
+      return oldJson.apply(res, arguments);
+    } catch (e) {
+      console.error('Erro ao converter resposta para JSON:', e);
+      return res.status(500).json({ 
+        error: 'Erro interno do servidor',
+        message: 'Erro ao processar dados da resposta'
+      });
+    }
+  };
+  next();
+});
 
 // Timeout para requisições
 app.use((req, res, next) => {
@@ -114,59 +142,61 @@ app.get('/api/produtos', async (req, res) => {
 // Criar novo produto
 app.post('/api/produtos', basicAuth, async (req, res) => {
   try {
-    console.log('Iniciando criação de produto:', req.body);
-    const { nome, categoria, descricao, preco, precoPromocional, disponivel, adicionais, image } = req.body;
+    console.log('Iniciando criação de produto:', JSON.stringify(req.body));
+    const { nome, categoria, descricao, preco, precoPromocional, disponivel, adicionais } = req.body;
     
     if (!nome || !categoria || !preco) {
       console.log('Campos obrigatórios faltando');
-      return res.status(400).json({ error: 'Campos obrigatórios faltando' });
+      return res.status(400).json({ 
+        error: 'Campos obrigatórios faltando',
+        campos: { nome, categoria, preco }
+      });
     }
 
     const database = await getDB();
     console.log('Conexão com banco estabelecida');
-    
-    let imageUrl = '';
-    if (image) {
-      console.log('Iniciando upload de imagem');
-      try {
-        const uploadResult = await cloudinary.uploader.upload(image, {
-          folder: 'sanduiche-chefe'
-        });
-        imageUrl = uploadResult.secure_url;
-        console.log('Imagem enviada com sucesso:', imageUrl);
-      } catch (uploadError) {
-        console.error('Erro no upload da imagem:', uploadError);
-        // Continua sem a imagem em caso de erro
-      }
-    }
 
     const novoProduto = {
-      nome: nome.trim(),
-      categoria: categoria.trim(),
-      descricao: descricao ? descricao.trim() : '',
-      preco: parseFloat(preco),
-      precoPromocional: precoPromocional ? parseFloat(precoPromocional) : null,
-      disponivel: disponivel === 'true' || disponivel === true,
-      adicionais: adicionais ? JSON.parse(adicionais) : [],
-      imagem: imageUrl,
+      nome: String(nome).trim(),
+      categoria: String(categoria).trim(),
+      descricao: descricao ? String(descricao).trim() : '',
+      preco: Number(preco),
+      precoPromocional: precoPromocional ? Number(precoPromocional) : null,
+      disponivel: Boolean(disponivel),
+      adicionais: [],
       createdAt: new Date()
     };
 
-    console.log('Tentando salvar produto:', novoProduto);
+    // Tratamento seguro dos adicionais
+    if (adicionais) {
+      try {
+        const adicionaisArray = typeof adicionais === 'string' ? JSON.parse(adicionais) : adicionais;
+        novoProduto.adicionais = Array.isArray(adicionaisArray) ? adicionaisArray : [];
+      } catch (e) {
+        console.error('Erro ao processar adicionais:', e);
+        novoProduto.adicionais = [];
+      }
+    }
+
+    console.log('Tentando salvar produto:', JSON.stringify(novoProduto));
     const result = await database.collection('produtos').insertOne(novoProduto);
-    console.log('Produto salvo com sucesso');
+    console.log('Produto salvo com sucesso, ID:', result.insertedId);
     
+    const produtoSalvo = {
+      ...novoProduto,
+      _id: result.insertedId
+    };
+
     return res.status(201).json({ 
       success: true,
-      produto: { ...novoProduto, _id: result.insertedId }
+      produto: produtoSalvo
     });
 
   } catch (error) {
     console.error('Erro detalhado ao criar produto:', error);
     return res.status(500).json({ 
       error: 'Erro ao criar produto',
-      message: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      message: error.message
     });
   }
 });
