@@ -6,10 +6,6 @@
         "use": "@vercel/node"
       },
       {
-        "src": "*.html",
-        "use": "@vercel/static"
-      },
-      {
         "src": "css/**",
         "use": "@vercel/static"
       },
@@ -20,15 +16,39 @@
       {
         "src": "img/**",
         "use": "@vercel/static"
+      },
+      {
+        "src": "*.html",
+        "use": "@vercel/static"
       }
     ],
     "routes": [
       {
-        "src": "/api/(.*)",
-        "dest": "/js/server.js"
+        "src": "/js/(.*)",
+        "dest": "/js/$1",
+        "headers": {
+          "Content-Type": "application/javascript"
+        }
       },
       {
-        "handle": "filesystem"
+        "src": "/css/(.*)",
+        "dest": "/css/$1"
+      },
+      {
+        "src": "/img/(.*)",
+        "dest": "/img/$1"
+      },
+      {
+        "src": "/api/(.*)",
+        "dest": "js/server.js"
+      },
+      {
+        "src": "/admin",
+        "dest": "/admin.html"
+      },
+      {
+        "src": "/(.*)",
+        "dest": "/$1"
       }
     ]
   }
