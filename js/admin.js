@@ -1,5 +1,5 @@
 let produtos = [];
-const API_URL = 'http://localhost:3000';
+const API_URL = window.location.origin;
 
 // Função auxiliar para fazer requisições autenticadas
 async function fetchAuth(url, options = {}) {
