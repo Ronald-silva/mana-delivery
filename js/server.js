@@ -68,8 +68,11 @@ app.use((req, res, next) => {
 // Conexão com MongoDB
 let db;
 const mongoClient = new MongoClient(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
+  serverApi: {
+    version: '1',
+    strict: true,
+    deprecationErrors: true
+  }
 });
 
 // Conectar ao MongoDB no início
