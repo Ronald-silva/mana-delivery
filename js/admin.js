@@ -112,96 +112,67 @@ function removerImagem() {
 
 // Salvar ou atualizar produto
 async function salvarProduto() {
-    const id = document.getElementById('produto-id').value;
     const nome = document.getElementById('produto-nome').value.trim();
     const categoria = document.getElementById('produto-categoria').value;
-    const descricao = document.getElementById('produto-descricao').value.trim();
     const preco = document.getElementById('produto-preco').value;
-    const precoPromocional = document.getElementById('produto-preco-promocional').value;
-    const disponivel = document.getElementById('produto-disponivel').checked;
-    const adicionaisInput = document.getElementById('produto-adicionais').value.trim();
-    const preview = document.getElementById('imagem-preview');
     const salvarBtn = document.getElementById('salvar-btn');
-    const uploadStatus = document.getElementById('upload-status');
 
-    // Validação básica
-    if (!nome) {
-        alert('Por favor, preencha o nome do produto.');
-        return;
-    }
-    if (!categoria) {
-        alert('Por favor, selecione uma categoria.');
-        return;
-    }
-    if (!preco || isNaN(preco) || parseFloat(preco) <= 0) {
-        alert('Por favor, insira um preço válido.');
-        return;
-    }
+    // Log dos dados que serão enviados
+    console.log('Dados a serem enviados:', { nome, categoria, preco });
 
-    // Processar adicionais
-    let adicionais = [];
-    if (adicionaisInput) {
-        try {
-            adicionais = adicionaisInput.split(',').map(item => {
-                const [nome, preco] = item.trim().split('-').map(str => str.trim());
-                if (!nome || !preco || isNaN(preco)) throw new Error('Formato inválido');
-                return { nome, preco: parseFloat(preco) };
-            });
-        } catch (error) {
-            alert('Formato inválido para adicionais. Use: Nome - Preço, separados por vírgula (ex.: Bacon - 3.00, Queijo Extra - 2.00).');
-            return;
-        }
+    if (!nome || !categoria || !preco) {
+        alert('Por favor, preencha todos os campos obrigatórios.');
+        return;
     }
 
     salvarBtn.disabled = true;
     salvarBtn.textContent = 'Salvando...';
-    uploadStatus.style.display = 'block';
-    uploadStatus.textContent = 'Preparando dados...';
 
     try {
-        const produtoData = {
-            nome,
-            categoria,
-            descricao,
-            preco: parseFloat(preco),
-            precoPromocional: precoPromocional ? parseFloat(precoPromocional) : null,
-            disponivel,
-            adicionais
-        };
-
-        // Adicionar imagem apenas se existir
-        if (preview.src && preview.src.startsWith('data:image')) {
-            produtoData.image = preview.src;
-        }
-
-        const url = id ? `${API_URL}/api/produtos/${id}` : `${API_URL}/api/produtos`;
-        const method = id ? 'PUT' : 'POST';
-
-        const response = await fetchAuth(url, {
-            method,
+        console.log('Iniciando requisição para:', `${API_URL}/api/produtos`);
+        
+        const response = await fetch(`${API_URL}/api/produtos`, {
+            method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Basic ' + btoa('admin:admin123')
             },
-            body: JSON.stringify(produtoData)
+            body: JSON.stringify({
+                nome,
+                categoria,
+                preco: parseFloat(preco)
+            })
         });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.error || data.message || 'Erro ao salvar produto');
+        console.log('Status da resposta:', response.status);
+        
+        // Tenta ler o corpo da resposta como texto primeiro
+        const responseText = await response.text();
+        console.log('Resposta como texto:', responseText);
+        
+        // Tenta converter para JSON
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (e) {
+            console.error('Erro ao fazer parse do JSON:', e);
+            throw new Error('Resposta inválida do servidor');
         }
 
-        console.log('Produto salvo:', data);
-        alert(id ? 'Produto atualizado com sucesso!' : 'Produto adicionado com sucesso!');
+        if (!response.ok) {
+            throw new Error(data.error || 'Erro ao salvar produto');
+        }
+
+        console.log('Produto salvo com sucesso:', data);
+        alert('Produto adicionado com sucesso!');
         limparFormulario();
         await carregarProdutos();
     } catch (error) {
-        console.error('Erro ao salvar produto:', error);
-        alert(`Erro ao salvar produto: ${error.message}`);
+        console.error('Erro completo:', error);
+        alert('Erro ao salvar produto: ' + error.message);
     } finally {
         salvarBtn.disabled = false;
         salvarBtn.textContent = 'Salvar Produto';
-        uploadStatus.style.display = 'none';
     }
 }
 

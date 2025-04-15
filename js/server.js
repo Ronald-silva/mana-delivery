@@ -109,36 +109,26 @@ app.get('/api/produtos', async (req, res) => {
   }
 });
 
-// Criar novo produto com melhor tratamento de erros
+// Criar novo produto
 app.post('/api/produtos', basicAuth, async (req, res) => {
+  console.log('=== Início da requisição POST /api/produtos ===');
+  console.log('Headers:', req.headers);
+  console.log('Body:', req.body);
+  
   try {
+    console.log('Conectando ao banco de dados...');
     const database = await connectDB();
-    const { nome, categoria, descricao, preco, precoPromocional, disponivel, adicionais, image } = req.body;
-    
-    // Validação mais detalhada dos campos
-    if (!nome || typeof nome !== 'string' || nome.trim().length === 0) {
-      return res.status(400).json({ error: 'Nome do produto é obrigatório' });
-    }
-    
-    if (!categoria || typeof categoria !== 'string' || categoria.trim().length === 0) {
-      return res.status(400).json({ error: 'Categoria é obrigatória' });
-    }
-    
-    if (!preco || isNaN(preco) || parseFloat(preco) <= 0) {
-      return res.status(400).json({ error: 'Preço é obrigatório e deve ser um número positivo' });
-    }
+    console.log('Conexão com banco de dados estabelecida');
 
-    let imageUrl = '';
-    if (image) {
-      try {
-        const uploadResult = await cloudinary.uploader.upload(image, {
-          folder: 'sanduiche-chefe',
-          timeout: 120000
-        });
-        imageUrl = uploadResult.secure_url;
-      } catch (uploadError) {
-        console.error('Erro no upload da imagem:', uploadError);
-      }
+    const { nome, categoria, descricao, preco } = req.body;
+    
+    // Log dos dados recebidos
+    console.log('Dados recebidos:', { nome, categoria, descricao, preco });
+    
+    // Validação simples
+    if (!nome || !categoria || !preco) {
+      console.log('Validação falhou:', { nome, categoria, preco });
+      return res.status(400).json({ error: 'Campos obrigatórios faltando' });
     }
 
     const novoProduto = {
@@ -146,29 +136,31 @@ app.post('/api/produtos', basicAuth, async (req, res) => {
       categoria: categoria.trim(),
       descricao: descricao ? descricao.trim() : '',
       preco: parseFloat(preco),
-      precoPromocional: precoPromocional ? parseFloat(precoPromocional) : null,
-      disponivel: disponivel === true,
-      adicionais: Array.isArray(adicionais) ? adicionais : [],
-      imagem: imageUrl,
+      disponivel: true,
       createdAt: new Date()
     };
 
-    const result = await database.collection('produtos').insertOne(novoProduto);
+    console.log('Tentando inserir produto:', novoProduto);
     
-    if (!result.acknowledged) {
-      throw new Error('Falha ao inserir o produto no banco de dados');
-    }
-
+    const result = await database.collection('produtos').insertOne(novoProduto);
+    console.log('Resultado da inserção:', result);
+    
+    console.log('Enviando resposta de sucesso');
     return res.status(201).json({ 
-      ...novoProduto, 
-      _id: result.insertedId 
+      success: true,
+      produto: { ...novoProduto, _id: result.insertedId }
     });
 
   } catch (error) {
-    console.error('Erro ao criar produto:', error);
+    console.error('Erro detalhado:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+    
     return res.status(500).json({ 
       error: 'Erro ao criar produto',
-      message: error.message
+      details: error.message
     });
   }
 });
