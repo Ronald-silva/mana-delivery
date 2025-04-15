@@ -51,6 +51,12 @@
         "dest": "/$1"
       }
     ],
+    "functions": {
+      "js/server.js": {
+        "memory": 1024,
+        "maxDuration": 60
+      }
+    },
     "env": {
       "NODE_ENV": "production"
     }

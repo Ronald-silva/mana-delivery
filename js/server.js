@@ -40,13 +40,8 @@ app.use((req, res, next) => {
 // Conexão com MongoDB
 let db;
 const mongoClient = new MongoClient(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  serverApi: {
-    version: '1',
-    strict: true,
-    deprecationErrors: true,
-  }
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 30000,
 });
 
 async function connectDB() {
@@ -111,26 +106,15 @@ app.get('/api/produtos', async (req, res) => {
 
 // Criar novo produto
 app.post('/api/produtos', basicAuth, async (req, res) => {
-  console.log('=== Início da requisição POST /api/produtos ===');
-  console.log('Headers:', req.headers);
-  console.log('Body:', req.body);
-  
   try {
-    console.log('Conectando ao banco de dados...');
-    const database = await connectDB();
-    console.log('Conexão com banco de dados estabelecida');
-
     const { nome, categoria, descricao, preco } = req.body;
     
-    // Log dos dados recebidos
-    console.log('Dados recebidos:', { nome, categoria, descricao, preco });
-    
-    // Validação simples
     if (!nome || !categoria || !preco) {
-      console.log('Validação falhou:', { nome, categoria, preco });
       return res.status(400).json({ error: 'Campos obrigatórios faltando' });
     }
 
+    const database = await connectDB();
+    
     const novoProduto = {
       nome: nome.trim(),
       categoria: categoria.trim(),
@@ -140,27 +124,18 @@ app.post('/api/produtos', basicAuth, async (req, res) => {
       createdAt: new Date()
     };
 
-    console.log('Tentando inserir produto:', novoProduto);
-    
     const result = await database.collection('produtos').insertOne(novoProduto);
-    console.log('Resultado da inserção:', result);
     
-    console.log('Enviando resposta de sucesso');
     return res.status(201).json({ 
       success: true,
       produto: { ...novoProduto, _id: result.insertedId }
     });
 
   } catch (error) {
-    console.error('Erro detalhado:', {
-      message: error.message,
-      stack: error.stack,
-      name: error.name
-    });
-    
+    console.error('Erro ao criar produto:', error);
     return res.status(500).json({ 
       error: 'Erro ao criar produto',
-      details: error.message
+      message: error.message 
     });
   }
 });
