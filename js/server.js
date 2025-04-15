@@ -68,23 +68,22 @@ app.use((req, res, next) => {
 // Conexão com MongoDB
 let db;
 const mongoClient = new MongoClient(process.env.MONGODB_URI, {
-  serverSelectionTimeoutMS: 5000,
-  socketTimeoutMS: 30000,
-  connectTimeoutMS: 30000,
-  ssl: true,
-  sslValidate: true,
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
 
 // Conectar ao MongoDB no início
-mongoClient.connect().then(() => {
-  db = mongoClient.db('sanduiche-do-chefe');
-  console.log('Conectado ao MongoDB');
-}).catch(error => {
-  console.error('Erro ao conectar ao MongoDB:', error);
-});
+mongoClient.connect()
+  .then(() => {
+    console.log('Conectado ao MongoDB');
+    db = mongoClient.db('sanduiche-do-chefe');
+  })
+  .catch(error => {
+    console.error('Erro ao conectar ao MongoDB:', error);
+    process.exit(1); // Encerra o processo se não conseguir conectar
+  });
 
+// Garantir que temos conexão antes de qualquer operação
 async function getDB() {
   if (!db) {
     await mongoClient.connect();
