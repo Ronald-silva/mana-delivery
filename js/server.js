@@ -23,10 +23,11 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Servir arquivos estáticos da pasta "public"
-app.use(express.static(path.join(__dirname, 'public')));
+// SERVIR ARQUIVOS ESTÁTICOS DA PASTA "public"
+// Como server.js está em "js/", usamos ../public para ir para a raiz
+app.use(express.static(path.join(__dirname, '../public')));
 
-// Middleware de CORS adicional (opcional)
+// Middleware para adicionar headers de CORS (opcional)
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -45,7 +46,8 @@ const mongoClient = new MongoClient(process.env.MONGODB_URI, {
     version: '1',
     strict: true,
     deprecationErrors: true
-  }
+  },
+  tlsAllowInvalidCertificates: true // Use para teste; idealmente remova esta opção quando estiver seguro
 });
 
 mongoClient.connect()
@@ -66,7 +68,7 @@ async function getDB() {
   return db;
 }
 
-// Autenticação básica
+// Middleware de autenticação básica
 const basicAuth = (req, res, next) => {
   const auth = req.headers.authorization;
   if (!auth || !auth.startsWith('Basic ')) {
@@ -84,11 +86,11 @@ const basicAuth = (req, res, next) => {
 
 // Rotas
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/index.html'));
+  res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 app.get('/admin', basicAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/admin.html'));
+  res.sendFile(path.join(__dirname, '../public/admin.html'));
 });
 
 // API para produtos
@@ -103,7 +105,6 @@ app.get('/api/produtos', async (req, res) => {
   }
 });
 
-// Criar novo produto
 app.post('/api/produtos', basicAuth, async (req, res) => {
   try {
     const { nome, categoria, descricao, preco, disponivel } = req.body;
@@ -127,7 +128,6 @@ app.post('/api/produtos', basicAuth, async (req, res) => {
   }
 });
 
-// Atualizar produto
 app.put('/api/produtos/:id', basicAuth, async (req, res) => {
   try {
     const database = await getDB();
@@ -158,14 +158,13 @@ app.put('/api/produtos/:id', basicAuth, async (req, res) => {
       { $set: updateData }
     );
     if (result.matchedCount === 0) return res.status(404).json({ error: 'Produto não encontrado' });
-    res.json({ ...updateData, _id: id });
+    res.json({ _id: id, ...updateData });
   } catch (error) {
     console.error('Erro ao atualizar produto:', error);
     res.status(500).json({ error: 'Erro ao atualizar produto', details: error.message });
   }
 });
 
-// Deletar produto
 app.delete('/api/produtos/:id', basicAuth, async (req, res) => {
   try {
     const database = await getDB();
@@ -181,15 +180,15 @@ app.delete('/api/produtos/:id', basicAuth, async (req, res) => {
 
 // Fallback para 404
 app.use((req, res) => {
-  res.status(404).sendFile(path.join(__dirname, 'public/404.html'));
+  res.status(404).sendFile(path.join(__dirname, '../public/404.html'));
 });
 
-// Iniciar o servidor (em todos os ambientes)
+// Iniciar o servidor (sempre, independentemente do ambiente)
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
   console.log(`Acesse: http://localhost:${PORT}`);
 });
 
-// Exporta a instância do app (caso precise para testes)
+// Exporta o app (caso seja necessário para testes)
 module.exports = app;
