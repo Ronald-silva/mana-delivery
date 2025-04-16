@@ -53,7 +53,10 @@ const mongoClient = new MongoClient(process.env.MONGODB_URI, {
   retryWrites: true,
   retryReads: true,
   maxPoolSize: 10,
-  minPoolSize: 5
+  minPoolSize: 5,
+  connectTimeoutMS: 10000,
+  socketTimeoutMS: 45000,
+  family: 4
 });
 
 mongoClient.connect()

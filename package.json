@@ -2,6 +2,9 @@
   "name": "sanduiche-chefe",
   "version": "1.0.0",
   "main": "js/server.js",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "start": "node js/server.js",
     "build": "echo \"No build step required\"",
