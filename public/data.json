@@ -7,7 +7,7 @@
       "descricao": "Hambúrguer, queijo, alface e tomate",
       "preco": 15.9,
       "disponivel": true,
-      "imagem": "/img/x-burger.jpg"
+      "imagem": "/img/default.jpg"
     },
     {
       "id": 2,
@@ -16,14 +16,32 @@
       "descricao": "Hambúrguer, queijo, alface, tomate e maionese",
       "preco": 17.9,
       "disponivel": true,
-      "imagem": "/img/x-salada.jpg"
+      "imagem": "/img/default.jpg"
     },
     {
       "id": 3,
       "nome": "Refrigerante",
       "categoria": "Bebidas",
-      "descricao": "cocacola 1L",
+      "descricao": "Coca-Cola 1L",
       "preco": 9.99,
+      "disponivel": true,
+      "imagem": "/img/default.jpg"
+    },
+    {
+      "id": 4,
+      "nome": "Refrigerante",
+      "categoria": "Bebidas",
+      "descricao": "fanta laranja",
+      "preco": 6.98,
+      "disponivel": true,
+      "imagem": "/img/default.jpg"
+    },
+    {
+      "id": 5,
+      "nome": "Refrigerante",
+      "categoria": "Bebidas",
+      "descricao": "fanta uva",
+      "preco": 7,
       "disponivel": true,
       "imagem": "/img/default.jpg"
     }
