@@ -1,0 +1,22 @@
+{
+  "produtos": [
+    {
+      "id": 1,
+      "nome": "X-Burger",
+      "categoria": "Sanduíches",
+      "descricao": "Hambúrguer, queijo, alface e tomate",
+      "preco": 15.90,
+      "disponivel": true,
+      "imagem": "/img/x-burger.jpg"
+    },
+    {
+      "id": 2,
+      "nome": "X-Salada",
+      "categoria": "Sanduíches",
+      "descricao": "Hambúrguer, queijo, alface, tomate e maionese",
+      "preco": 17.90,
+      "disponivel": true,
+      "imagem": "/img/x-salada.jpg"
+    }
+  ]
+} 
