@@ -11,29 +11,10 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Configurar o servidor de arquivos estáticos
-app.use(express.static(path.join(__dirname, '../public'), {
-  maxAge: '1d',
-  setHeaders: (res, path) => {
-    if (path.endsWith('.css')) {
-      res.setHeader('Content-Type', 'text/css');
-    }
-  }
-}));
-
-// Servir arquivos CSS especificamente
-app.use('/css', express.static(path.join(__dirname, '../public/css'), {
-  maxAge: '1d'
-}));
-
-// Servir arquivos JS especificamente
-app.use('/js', express.static(path.join(__dirname, '../public/js'), {
-  maxAge: '1d'
-}));
-
-// Servir imagens especificamente
-app.use('/img', express.static(path.join(__dirname, '../public/img'), {
-  maxAge: '1d'
-}));
+app.use('/', express.static(path.join(__dirname, '../public')));
+app.use('/css', express.static(path.join(__dirname, '../public/css')));
+app.use('/js', express.static(path.join(__dirname, '../public/js')));
+app.use('/img', express.static(path.join(__dirname, '../public/img')));
 
 // Middleware de autenticação básica
 const basicAuth = (req, res, next) => {
