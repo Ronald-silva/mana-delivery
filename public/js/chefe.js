@@ -6,15 +6,20 @@ const API_URL = window.location.hostname === '127.0.0.1' || window.location.host
     ? 'http://localhost:3000'
     : 'https://sanduiche-do-chefe.onrender.com';
 
+console.log('Hostname:', window.location.hostname);
+console.log('API URL:', API_URL);
+
 // Função para carregar os produtos do servidor
 async function carregarProdutos() {
     try {
+        console.log('Tentando carregar produtos de:', `${API_URL}/api/produtos`);
         const timestamp = new Date().getTime();
         const response = await fetch(`${API_URL}/api/produtos?_=${timestamp}`);
         if (!response.ok) {
             throw new Error('Erro ao carregar produtos: ' + response.statusText);
         }
         const produtos = await response.json();
+        console.log('Produtos carregados com sucesso:', produtos);
         
         // Filtrar apenas produtos disponíveis
         const produtosDisponiveis = produtos.filter(produto => produto.disponivel);
