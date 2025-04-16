@@ -2,24 +2,58 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const fs = require('fs').promises;
+const compression = require('compression');
 
 const app = express();
 
 // Middleware
+app.use(compression()); // Adiciona compressão gzip
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Configurar o servidor de arquivos estáticos
-app.use('/', express.static(path.join(__dirname, '../public')));
-app.use('/css', express.static(path.join(__dirname, '../public/css')));
-app.use('/js', express.static(path.join(__dirname, '../public/js')));
-app.use('/img', express.static(path.join(__dirname, '../public/img')));
+// Configurações de segurança básicas
+app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    next();
+});
+
+// Log para debug apenas em desenvolvimento
+if (process.env.NODE_ENV !== 'production') {
+    app.use((req, res, next) => {
+        console.log(`${req.method} ${req.url}`);
+        next();
+    });
+}
+
+// Cache para arquivos estáticos em produção
+const cacheTime = process.env.NODE_ENV === 'production' ? 86400000 : 0; // 1 dia em produção
+app.use(express.static(path.join(__dirname, '../public'), {
+    maxAge: cacheTime,
+    etag: true
+}));
+
+// Rota específica para CSS com log
+app.get('/css/*', (req, res, next) => {
+    console.log('Requisição CSS:', req.path);
+    const cssPath = path.join(path.join(__dirname, '../public'), req.path);
+    console.log('Caminho do CSS:', cssPath);
+    if (fs.existsSync(cssPath)) {
+        res.type('text/css');
+        next();
+    } else {
+        console.log('Arquivo CSS não encontrado:', cssPath);
+        next();
+    }
+});
 
 // Middleware de autenticação básica
 const basicAuth = (req, res, next) => {
   const auth = req.headers.authorization;
   if (!auth || !auth.startsWith('Basic ')) {
+    res.set('WWW-Authenticate', 'Basic realm="Admin Area"');
     return res.status(401).json({ error: 'Autenticação necessária' });
   }
   const base64Credentials = auth.split(' ')[1];
@@ -28,6 +62,7 @@ const basicAuth = (req, res, next) => {
   if (username === 'admin' && password === 'admin123') {
     next();
   } else {
+    res.set('WWW-Authenticate', 'Basic realm="Admin Area"');
     res.status(401).json({ error: 'Credenciais inválidas' });
   }
 };
@@ -140,6 +175,12 @@ app.delete('/api/produtos/:id', basicAuth, async (req, res) => {
 // Fallback para 404
 app.use((req, res) => {
   res.status(404).sendFile(path.join(__dirname, '../public/404.html'));
+});
+
+// Tratamento de erros global
+app.use((err, req, res, next) => {
+    console.error('Erro:', err);
+    res.status(500).json({ error: 'Erro interno do servidor' });
 });
 
 // Iniciar o servidor

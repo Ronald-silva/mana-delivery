@@ -1,30 +1,48 @@
 let produtos = [];
-const API_URL = window.location.origin;
+const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:3000'
+    : window.location.origin;
 
 // Função auxiliar para fazer requisições autenticadas
 async function fetchAuth(url, options = {}) {
     const credentials = btoa('admin:admin123');
     const headers = {
         'Authorization': `Basic ${credentials}`,
+        'Content-Type': 'application/json',
         ...options.headers
     };
-    return fetch(url, { ...options, headers });
+    
+    try {
+        const response = await fetch(url, { ...options, headers });
+        if (response.status === 401) {
+            alert('Sessão expirada. Por favor, faça login novamente.');
+            window.location.reload();
+            return null;
+        }
+        if (!response.ok) {
+            throw new Error(`Erro na requisição: ${response.status} - ${response.statusText}`);
+        }
+        return response;
+    } catch (error) {
+        console.error('Erro na requisição:', error);
+        alert('Erro ao comunicar com o servidor. Por favor, tente novamente.');
+        return null;
+    }
 }
 
 // Carregar produtos ao abrir a página
 async function carregarProdutos() {
     console.log('Carregando produtos...');
     try {
-        const response = await fetch(`${API_URL}/api/produtos`);
-        if (!response.ok) {
-            throw new Error(`Erro ao carregar produtos: ${response.status} - ${response.statusText}`);
-        }
+        const response = await fetchAuth(`${API_URL}/api/produtos`);
+        if (!response) return;
+        
         produtos = await response.json();
         console.log('Produtos carregados:', produtos);
         exibirProdutos();
     } catch (error) {
         console.error('Erro ao carregar produtos:', error);
-        alert('Não foi possível carregar os produtos. Verifique o console para mais detalhes.');
+        alert('Não foi possível carregar os produtos. Por favor, tente novamente mais tarde.');
     }
 }
 

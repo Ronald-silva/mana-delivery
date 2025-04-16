@@ -5,7 +5,7 @@
       "nome": "X-Burger",
       "categoria": "Sanduíches",
       "descricao": "Hambúrguer, queijo, alface e tomate",
-      "preco": 15.90,
+      "preco": 15.9,
       "disponivel": true,
       "imagem": "/img/x-burger.jpg"
     },
@@ -14,9 +14,18 @@
       "nome": "X-Salada",
       "categoria": "Sanduíches",
       "descricao": "Hambúrguer, queijo, alface, tomate e maionese",
-      "preco": 17.90,
+      "preco": 17.9,
       "disponivel": true,
       "imagem": "/img/x-salada.jpg"
+    },
+    {
+      "id": 3,
+      "nome": "Refrigerante",
+      "categoria": "Bebidas",
+      "descricao": "cocacola 1L",
+      "preco": 9.99,
+      "disponivel": true,
+      "imagem": "/img/default.jpg"
     }
   ]
-} 
+}
