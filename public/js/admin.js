@@ -1,5 +1,4 @@
 let produtos = [];
-const API_URL = window.location.origin;
 
 // Função auxiliar para fazer requisições autenticadas
 async function fetchAuth(url, options = {}) {
@@ -32,7 +31,7 @@ async function fetchAuth(url, options = {}) {
 async function carregarProdutos() {
     console.log('Carregando produtos...');
     try {
-        const response = await fetchAuth(`${API_URL}/api/produtos`);
+        const response = await fetchAuth('/api/produtos');
         if (!response) return;
         
         produtos = await response.json();
@@ -152,7 +151,7 @@ async function salvarProduto() {
     };
 
     try {
-        const response = await fetch(`${API_URL}/api/produtos`, {
+        const response = await fetch('/api/produtos', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -211,7 +210,7 @@ async function removerProduto(id) {
     }
 
     try {
-        const response = await fetchAuth(`${API_URL}/api/produtos/${id}`, {
+        const response = await fetchAuth('/api/produtos/' + id, {
             method: 'DELETE'
         });
 

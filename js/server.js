@@ -79,42 +79,46 @@ const basicAuth = (req, res, next) => {
 
 // Função para ler e escrever dados
 async function readData() {
-  try {
-    const data = await fs.readFile(path.join(__dirname, '../public/data.json'), 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    console.error('Erro ao ler dados:', error);
-    return { produtos: [] };
-  }
+    try {
+        console.log('Tentando ler arquivo:', path.join(__dirname, '../public/data.json'));
+        const data = await fs.readFile(path.join(__dirname, '../public/data.json'), 'utf8');
+        console.log('Dados lidos com sucesso:', data);
+        return JSON.parse(data);
+    } catch (error) {
+        console.error('Erro ao ler dados:', error);
+        return { produtos: [] };
+    }
 }
 
 async function writeData(data) {
-  try {
-    await fs.writeFile(path.join(__dirname, '../public/data.json'), JSON.stringify(data, null, 2));
-  } catch (error) {
-    console.error('Erro ao escrever dados:', error);
-    throw error;
-  }
+    try {
+        await fs.writeFile(path.join(__dirname, '../public/data.json'), JSON.stringify(data, null, 2));
+    } catch (error) {
+        console.error('Erro ao escrever dados:', error);
+        throw error;
+    }
 }
 
 // Rotas
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
+    res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 app.get('/admin', basicAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/admin.html'));
+    res.sendFile(path.join(__dirname, '../public/admin.html'));
 });
 
 // API para produtos
 app.get('/api/produtos', async (req, res) => {
-  try {
-    const data = await readData();
-    res.json(data.produtos);
-  } catch (error) {
-    console.error('Erro ao buscar produtos:', error);
-    res.status(500).json({ error: 'Erro ao buscar produtos' });
-  }
+    console.log('Recebida requisição GET /api/produtos');
+    try {
+        const data = await readData();
+        console.log('Enviando produtos:', data.produtos);
+        res.json(data.produtos);
+    } catch (error) {
+        console.error('Erro ao buscar produtos:', error);
+        res.status(500).json({ error: 'Erro ao buscar produtos' });
+    }
 });
 
 app.post('/api/produtos', basicAuth, async (req, res) => {

@@ -10,17 +10,20 @@ console.log('API URL:', API_URL);
 // Função para carregar os produtos do servidor
 async function carregarProdutos() {
     try {
-        console.log('Tentando carregar produtos de:', `${API_URL}/api/produtos`);
-        const timestamp = new Date().getTime();
-        const response = await fetch(`${API_URL}/api/produtos?_=${timestamp}`);
+        console.log('Iniciando carregamento de produtos...');
+        const response = await fetch('/api/produtos');
+        console.log('Resposta recebida:', response);
+        
         if (!response.ok) {
             throw new Error('Erro ao carregar produtos: ' + response.statusText);
         }
+        
         const produtos = await response.json();
-        console.log('Produtos carregados com sucesso:', produtos);
+        console.log('Produtos carregados:', produtos);
         
         // Filtrar apenas produtos disponíveis
         const produtosDisponiveis = produtos.filter(produto => produto.disponivel);
+        console.log('Produtos disponíveis:', produtosDisponiveis);
 
         // Agrupar produtos por categoria
         const produtosPorCategoria = produtosDisponiveis.reduce((acc, produto) => {
@@ -63,7 +66,7 @@ async function carregarProdutos() {
         }
     } catch (error) {
         console.error('Erro ao carregar produtos:', error);
-        alert('Não foi possível carregar o menu. Verifique se o servidor está rodando.');
+        alert('Não foi possível carregar o menu. Por favor, tente novamente mais tarde.');
     }
 }
 
