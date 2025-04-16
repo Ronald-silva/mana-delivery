@@ -2,12 +2,16 @@ services:
   - type: web
     name: sanduiche-chefe
     env: node
-    buildCommand: npm install
-    startCommand: npm start
+    buildCommand: npm install && npm cache clean --force
+    startCommand: node js/server.js
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 3000
     healthCheckPath: /
-    autoDeploy: true 
+    autoDeploy: true
+    disk:
+      name: data
+      mountPath: /opt/render/project/public
+      sizeGB: 1 
