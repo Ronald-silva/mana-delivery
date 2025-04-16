@@ -1,7 +1,5 @@
 let produtos = [];
-const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://localhost:3000'
-    : 'https://sanduiche-do-chefe.onrender.com';
+const API_URL = window.location.origin;
 
 // Função auxiliar para fazer requisições autenticadas
 async function fetchAuth(url, options = {}) {

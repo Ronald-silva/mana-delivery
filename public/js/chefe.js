@@ -1,10 +1,8 @@
 let cart = [];
 let cartTotal = 0;
 
-// URL da API - usa URL local se estiver em desenvolvimento
-const API_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-    ? 'http://localhost:3000'
-    : 'https://sanduiche-do-chefe.onrender.com';
+// URL da API - usa o mesmo domínio da página
+const API_URL = window.location.origin;
 
 console.log('Hostname:', window.location.hostname);
 console.log('API URL:', API_URL);
