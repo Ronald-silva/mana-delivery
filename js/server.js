@@ -93,6 +93,8 @@ app.get('/admin', basicAuth, (req, res) => {
   res.sendFile(path.join(__dirname, '../public/admin.html'));
 });
 
+
+
 // API para produtos
 app.get('/api/produtos', async (req, res) => {
   try {
