@@ -4,7 +4,7 @@ let cartTotal = 0;
 // URL da API - usa URL local se estiver em desenvolvimento
 const API_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
     ? 'http://localhost:3000'
-    : 'https://sanduiche-chefe.vercel.app';
+    : 'https://sanduiche-do-chefe.onrender.com';
 
 // Função para carregar os produtos do servidor
 async function carregarProdutos() {
