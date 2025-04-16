@@ -6,6 +6,16 @@ const compression = require('compression');
 
 const app = express();
 
+// Middleware para evitar cache em desenvolvimento
+app.use((req, res, next) => {
+    if (req.url.endsWith('.js')) {
+        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+    }
+    next();
+});
+
 // Configuração do CORS
 app.use(cors({
     origin: ['https://sanduiche-do-chefe.onrender.com', 'http://localhost:3000'],
