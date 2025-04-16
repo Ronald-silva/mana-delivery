@@ -2,7 +2,7 @@ services:
   - type: web
     name: sanduiche-chefe
     env: node
-    buildCommand: npm install && npm cache clean --force
+    buildCommand: rm -rf node_modules && npm ci
     startCommand: node js/server.js
     envVars:
       - key: NODE_ENV
