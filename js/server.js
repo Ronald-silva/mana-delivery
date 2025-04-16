@@ -47,16 +47,27 @@ const mongoClient = new MongoClient(process.env.MONGODB_URI, {
     strict: true,
     deprecationErrors: true
   },
-  tlsAllowInvalidCertificates: true // Use para teste; idealmente remova esta opção quando estiver seguro
+  tls: true,
+  tlsAllowInvalidCertificates: false,
+  tlsAllowInvalidHostnames: false,
+  retryWrites: true,
+  retryReads: true,
+  maxPoolSize: 10,
+  minPoolSize: 5
 });
 
 mongoClient.connect()
   .then(() => {
-    console.log('MongoDB conectado');
+    console.log('MongoDB conectado com sucesso');
     db = mongoClient.db('sanduiche-do-chefe');
   })
   .catch(error => {
     console.error('Erro ao conectar ao MongoDB:', error);
+    console.error('Detalhes do erro:', {
+      message: error.message,
+      code: error.code,
+      stack: error.stack
+    });
     process.exit(1);
   });
 
