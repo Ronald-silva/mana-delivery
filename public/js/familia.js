@@ -229,7 +229,7 @@ document.getElementById('checkoutForm').addEventListener('submit', (event) => {
     }
 
     // Enviar para o WhatsApp
-    const whatsappNumber = '+5585991993833';
+    const whatsappNumber = '+558599898380';
     const whatsappMessage = encodeURIComponent(message);
     const whatsappURL = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${whatsappMessage}`;
     window.open(whatsappURL, '_blank');
