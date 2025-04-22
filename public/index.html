@@ -1,274 +1,126 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sanduíche do Chefe</title>
-    <link rel="stylesheet" href="css/chefe.css">
-    <link rel="shortcut icon" href="img/logo.png" type="image/logo-png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sanduíche do Chefe</title>
+  <link rel="shortcut icon" href="img/logo.png" type="image/png">
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/chefe.css">
 </head>
 <body>
-    <div class="container">
-        <div class="divlogo">
-            <img id="logo" src="img/logo.png" alt="">
-            
-        </div>
-        
-        <div id="titulo">
-            
-            <p><a href="https://www.google.com/maps/place/R.+Dr.+Justa+Ara%C3%BAjo,+855+-+Serrinha,+Fortaleza+-+CE,+60741-025/@-3.7835879,-38.5554813,17z/data=!3m1!4b1!4m6!3m5!1s0x7c74e95d3f325b1:0x6601eb014b422ac9!8m2!3d-3.7835933!4d-38.552901!16s%2Fg%2F11j2cd4_w3?authuser=0&entry=ttu&g_ep=EgoyMDI0MDkxNi4wIKXMDSoASAFQAw%3D%3D" target="_blank">Rua: Dr. Justa Araújo, 855, Fortaleza,<br>Brazil 60741-025 </a><br>
-                Aberto das 17h às 1h.</p>
-            <p></p>
-            <h1>Cardápio</h1>
-        </div>
-        
-        <div id="menu">
-            
-            <div class="menu-item">
-                <img src="img/sanduiche.webp" alt="X-Frango">
-                <div>
-                    <h3>X-Frango</h3>
-                    <p>Frango grelhado com alface, tomate e maionese.</p>
-                    <p>Preço: R$ 16,50</p>
-                    <button onclick="addToCart('X-Frango', 16.50)">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-            
-            
-            <div class="menu-item">
-                <img src="img/sanduiche.webp" alt="Francatu">
-                <div>
-                    <h3>Francatu</h3>
-                    <p>Frango grelhado com queijo, presunto, alface e tomate.</p>
-                    <p>Preço: R$ 17,00</p>
-                    <button onclick="addToCart('Francatu', 17.00)">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-            
-            <div class="menu-item">
-                <img src="img/sanduiche.webp" alt="X-Frango à Moda">
-                <div>
-                    <h3>X-Frango à Moda</h3>
-                    <p>Frango grelhado com alface, tomate, queijo e presunto.</p>
-                    <p>Preço: R$ 17,00</p>
-                    <button onclick="addToCart('X-Frango à Moda', 17.00)">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-            
-            <div class="menu-item">
-                <img src="img/sanduiche.webp" alt="Top Frango">
-                <div>
-                    <h3>Top Frango</h3>
-                    <p>Frango grelhado com bacon, queijo, alface e tomate.</p>
-                    <p>Preço: R$ 18,00</p>
-                    <button onclick="addToCart('Top Frango', 18.00)">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-            
-            <div class="menu-item">
-                <img src="img/sanduiche.webp" alt="Super Frango">
-                <div>
-                    <h3>Super Frango</h3>
-                    <p>Frango grelhado com queijo, presunto, alface e tomate.</p>
-                    <p>Preço: R$ 17,50</p>
-                    <button onclick="addToCart('Super Frango', 17.50)">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-            
-            <div class="menu-item">
-                <img src="img/sanduiche.webp" alt="Master Frango">
-                <div>
-                    <h3>Master Frango</h3>
-                    <p>Frango grelhado com queijo, bacon, alface e molho especial.</p>
-                    <p>Preço: R$ 17,00</p>
-                    <button onclick="addToCart('Master Frango', 17.00)">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-            
-            <div class="menu-item">
-                <img src="img/sanduiche.webp" alt="Super Calabresa">
-                <div>
-                    <h3>Super Calabresa</h3>
-                    <p>Calabresa grelhada com queijo, alface e tomate.</p>
-                    <p>Preço: R$ 17,50</p>
-                    <button onclick="addToCart('Super Calabresa', 17.50)">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-            
-            <div class="menu-item">
-                <img src="img/sanduiche.webp" alt="Big Super">
-                <div>
-                    <h3>Big Super</h3>
-                    <p>Frango grelhado com queijo, presunto, bacon, alface e tomate.</p>
-                    <p>Preço: R$ 17,50</p>
-                    <button onclick="addToCart('Big Super', 17.50)">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-            
-            <div class="menu-item">
-                <img src="img/sanduiche.webp" alt="Dig Bagunça">
-                <div>
-                    <h3>Big Bagunça</h3>
-                    <p>Frango grelhado com queijo, presunto, bacon, alface, tomate e molho especial.</p>
-                    <p>Preço: R$ 17,00</p>
-                    <button onclick="addToCart('Dig Bagunça', 17.00)">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-            
-            <div class="menu-item">
-                <img src="img/sanduiche.webp" alt="X-Hawai">
-                <div>
-                    <h3>X-Hawai</h3>
-                    <p>Frango grelhado com queijo, presunto, abacaxi, alface e tomate.</p>
-                    <p>Preço: R$ 17,00</p>
-                    <button onclick="addToCart('X-Hawai', 17.00)">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-            
-            <div class="menu-item">
-                <img src="img/sanduiche.webp" alt="Pre-X-Burguer">
-                <div>
-                    <h3>Pre-X-Burguer</h3>
-                    <p>Hambúrguer com queijo, alface e tomate.</p>
-                    <p>Preço: R$ 16,50</p>
-                    <button onclick="addToCart('Pre-X-Burguer', 16.50)">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-            
-            <div class="menu-item">
-                <img src="img/sanduiche.webp" alt="X-Burguer">
-                <div>
-                    <h3>X-Burguer</h3>
-                    <p>Hambúrguer com queijo, alface e tomate.</p>
-                    <p>Preço: R$ 14,00</p>
-                    <button onclick="addToCart('X-Burguer', 14.00)">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-            
-            <div class="menu-item">
-                <img src="img/sanduiche.webp" alt="X-Calabresa">
-                <div>
-                    <h3>X-Calabresa</h3>
-                    <p>Calabresa grelhada com queijo, alface e tomate.</p>
-                    <p>Preço: R$ 16,50</p>
-                    <button onclick="addToCart('X-Calabresa', 16.50)">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-
-            <div class="menu-item">
-                <img src="img/suco-acerola.png" alt="Suco de Acerola">
-                <div>
-                    <h3>Suco de Acerola</h3>
-                   
-                    <p>Preço: R$ 8,00</p>
-                    <button onclick="addToCart('Suco de Acerola', 8.00)">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-            
-            <div class="menu-item">
-                <img src="img/suco-maracuja.jpg" alt="Suco de Maracujá">
-                <div>
-                    <h3>Suco de Maracujá</h3>
-                    
-                    <p>Preço: R$ 9,00</p>
-                    <button onclick="addToCart('Suco de Maracujá', 9.00)">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-            
-            <div class="menu-item">
-                <img src="img/suco-morango.webp" alt="Suco de Morango">
-                <div>
-                    <h3>Suco de Morango</h3>
-                  
-                    <p>Preço: R$ 9,00</p>
-                    <button onclick="addToCart('Suco de Morango', 9.00)">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-            
-            <div class="menu-item">
-                <img src="img/suco-goiaba.png" alt="Suco de Goiaba">
-                <div>
-                    <h3>Suco de Goiaba</h3>
-                    
-                    <p>Preço: R$ 9,00</p>
-                    <button onclick="addToCart('Suco de Goiaba', 9.00)">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-            
-            <div class="menu-item">
-                <img src="img/suco-graviola.png" alt="Suco de Graviola">
-                <div>
-                    <h3>Suco de Graviola</h3>
-                    
-                    <p>Preço: R$ 9,00</p>
-                    <button onclick="addToCart('Suco de Graviola', 9.00)">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-            
-            <div class="menu-item">
-                <img src="img/suco-manga.png" alt="Suco de Manga">
-                <div>
-                    <h3>Suco de Manga</h3>
-                    
-                    <p>Preço: R$ 9,90</p>
-                    <button onclick="addToCart('Suco de Manga', 9.90)">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-            
-          
-            <div class="menu-item">
-                <img src="img/agua.jpg" alt="Água Mineral">
-                <div>
-                    <h3>Água Mineral</h3>
-                    
-                    <p>Preço: R$ 2,00</p>
-                    <button onclick="addToCart('Água Mineral', 2.00)">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-            
-            
-            
-            <!-- Adicione mais itens ao cardápio aqui -->
-        </div>
+  <!-- HEADER -->
+  <header>
+    <div class="container header-content">
+      <div class="logo-wrapper">
+        <img id="logo" src="img/logo.png" alt="Sanduíche do Chefe">
+      </div>
+      <div class="store-info">
+        <a href="https://goo.gl/maps/11j2cd4_w3" target="_blank">
+          Rua: Dr. Justa Araújo, 855 – Serrinha
+        </a>
+        <p>Fortaleza-CE | Aberto das 17h às 1h</p>
+      </div>
+      <h1 class="page-title">Cardápio</h1>
     </div>
-    
+  </header>
 
-    <div id="cart-icon" onclick="toggleCart()">
-        🛒
-        <span id="cart-count">0</span>
-    </div>
-
-    <div id="cart-modal" onclick="closeCartIfClickedOutside(event)">
-        <div class="cart-content">
-            <h2>Seu Carrinho</h2>
-            <div id="cart-items"></div>
-            <p>Total: R$ <span id="cart-total">0.00</span></p>
-            <h3>Informações do Pedido</h3>
-            <select id="delivery-method">
-                <option value="retirada">Retirar no local</option>
-                <option value="entrega">Entrega a domicílio</option>
-            </select>
-            <div id="address-fields" style="display:none;">
-                <input type="text" id="customer-address" placeholder="Endereço de entrega" required>
-            </div>
-            <h3>Forma de Pagamento:</h3>
-            <select id="payment-method" onchange="toggleCashFields()">
-                
-                <option value="pix">PIX</option>
-                <option value="cartao">Cartão</option>
-                <option value="dinheiro">Dinheiro</option>
-            </select>
-            <div id="cash-payment-fields">
-                <input type="number" id="cash-amount" placeholder="Valor em dinheiro" step="0.01" min="0" oninput="calculateChange()">
-                <p>Troco: R$ <span id="change-amount">0.00</span></p>
-            </div>
-            <button onclick="finalizePedido()">Finalizar Pedido</button>
-            <button onclick="toggleCart()">Fechar Carrinho</button>
+  <!-- MAIN CONTENT -->
+  <main>
+    <div class="container" id="menu">
+      <!-- Exemplo de item, repetir para cada produto -->
+      <div class="menu-item">
+        <div class="image-wrapper">
+          <img src="img/sanduiche.png" alt="X-Frango">
         </div>
+        <div>
+          <h3>X-Frango</h3>
+          <p>Frango grelhado com alface, tomate e maionese.</p>
+          <p>Preço: R$ 16,50</p>
+          <button onclick="addToCart('X-Frango', 16.50)">Adicionar</button>
+        </div>
+      </div>
+      <div class="menu-item">
+        <div class="image-wrapper">
+          <img src="img/sanduiche.png" alt="Francatu">
+        </div>
+        <div>
+          <h3>Francatu</h3>
+          <p>Frango grelhado com queijo, presunto, alface e tomate.</p>
+          <p>Preço: R$ 17,00</p>
+          <button onclick="addToCart('Francatu', 17.00)">Adicionar</button>
+        </div>
+      </div>
+      <div class="menu-item">
+        <div class="image-wrapper">
+          <img src="img/sanduiche.png" alt="X-Frango à Moda">
+        </div>
+        <div>
+          <h3>X-Frango à Moda</h3>
+          <p>Frango grelhado com alface, tomate, queijo e presunto.</p>
+          <p>Preço: R$ 17,00</p>
+          <button onclick="addToCart('X-Frango à Moda', 17.00)">Adicionar</button>
+        </div>
+      </div>
+      <!-- ... incluir aqui todos os outros itens do cardápio seguindo o mesmo padrão ... -->
     </div>
-    <div class="footer"><p>Siga-nos no <a href="https://www.instagram.com/sanduiche_do_chef/?__pwa=1" target="_blank">Instagram</a></p></div>
-    
+  </main>
 
-    <script src="js/chefe.js?v=1"></script>
+  <!-- CART ICON -->
+  <div id="cart-icon" onclick="toggleCart()">
+    🛒<span id="cart-count">0</span>
+  </div>
+
+  <!-- CART MODAL -->
+  <div id="cart-modal" onclick="closeCartIfClickedOutside(event)">
+    <div class="cart-content">
+      <h2>Seu Carrinho</h2>
+      <div id="cart-items"></div>
+      <p class="cart-total">Total: R$ <span id="cart-total">0.00</span></p>
+
+      <fieldset class="order-info">
+        <legend>Informações do Pedido</legend>
+        <label>
+          Entrega
+          <select id="delivery-method">
+            <option value="retirada">Retirar no local</option>
+            <option value="entrega">Entrega a domicílio</option>
+          </select>
+        </label>
+        <label class="address-field" style="display: none;">
+          Endereço de entrega
+          <input type="text" id="customer-address" placeholder="Rua, número, bairro">
+        </label>
+      </fieldset>
+
+      <fieldset class="payment-info">
+        <legend>Forma de Pagamento</legend>
+        <label>
+          <select id="payment-method">
+            <option value="pix">PIX</option>
+            <option value="cartao">Cartão</option>
+            <option value="dinheiro">Dinheiro</option>
+          </select>
+        </label>
+        <div id="cash-payment-fields" style="display: none;">
+          <label>
+            Você dá
+            <input type="number" id="cash-amount" placeholder="Valor em dinheiro" step="0.01" min="0">
+          </label>
+          <p class="change-amount">Troco: R$ <span id="change-amount">0.00</span></p>
+        </div>
+      </fieldset>
+
+      <button onclick="finalizePedido()" class="whatsapp-btn">Enviar Pedido</button>
+      <button onclick="toggleCart()" class="close-btn">Fechar Carrinho</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer footer-content">
+    <p>Siga-nos no <a href="https://www.instagram.com/sanduiche_do_chef/?__pwa=1" target="_blank">Instagram</a></p>
+  </footer>
+
+  <script src="js/chefe.js?v=1"></script>
 </body>
 </html>

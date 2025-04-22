@@ -118,7 +118,16 @@ function updateCartDisplay() {
 
 function toggleCart() {
     const modal = document.getElementById('cart-modal');
-    modal.style.display = modal.style.display === 'none' ? 'flex' : 'none';
+    if (modal.style.display === 'none') {
+        modal.style.display = 'flex';
+        // Reset dos campos ao abrir o modal
+        document.getElementById('delivery-method').value = 'retirada';
+        document.getElementById('payment-method').value = 'pix';
+        toggleAddressFields();
+        toggleCashFields();
+    } else {
+        modal.style.display = 'none';
+    }
 }
 
 function closeCartIfClickedOutside(event) {
@@ -133,8 +142,13 @@ function closeCartIfClickedOutside(event) {
 function toggleCashFields() {
     const paymentMethod = document.getElementById('payment-method').value;
     const cashFields = document.getElementById('cash-payment-fields');
-    cashFields.style.display = paymentMethod === 'dinheiro' ? 'block' : 'none';
-    if (paymentMethod !== 'dinheiro') {
+    
+    if (paymentMethod === 'dinheiro') {
+        cashFields.style.display = 'block';
+        // Adiciona o evento de input para calcular o troco em tempo real
+        document.getElementById('cash-amount').addEventListener('input', calculateChange);
+    } else {
+        cashFields.style.display = 'none';
         document.getElementById('cash-amount').value = '';
         document.getElementById('change-amount').textContent = '0.00';
     }
@@ -144,18 +158,41 @@ function toggleCashFields() {
 function calculateChange() {
     const cashAmount = parseFloat(document.getElementById('cash-amount').value) || 0;
     const changeAmount = document.getElementById('change-amount');
-    if (cashAmount >= cartTotal) {
-        changeAmount.textContent = (cashAmount - cartTotal).toFixed(2);
+    const change = cashAmount - cartTotal;
+    
+    if (change >= 0) {
+        changeAmount.textContent = change.toFixed(2);
     } else {
         changeAmount.textContent = '0.00';
     }
 }
 
 // Função para mostrar/esconder os campos de endereço
-document.getElementById('delivery-method').addEventListener('change', function() {
-    const addressFields = document.getElementById('address-fields');
-    addressFields.style.display = this.value === 'entrega' ? 'block' : 'none';
-});
+function toggleAddressFields() {
+    const deliveryMethod = document.getElementById('delivery-method').value;
+    const addressField = document.querySelector('.address-field');
+    
+    if (deliveryMethod === 'entrega') {
+        addressField.style.display = 'block';
+    } else {
+        addressField.style.display = 'none';
+        document.getElementById('customer-address').value = '';
+    }
+}
+
+// Função para inicializar o modal do carrinho
+function initializeCartModal() {
+    // Configura os eventos dos selects
+    document.getElementById('delivery-method').addEventListener('change', toggleAddressFields);
+    document.getElementById('payment-method').addEventListener('change', toggleCashFields);
+    
+    // Esconde os campos condicionais inicialmente
+    const addressField = document.querySelector('.address-field');
+    const cashFields = document.getElementById('cash-payment-fields');
+    
+    addressField.style.display = 'none';
+    cashFields.style.display = 'none';
+}
 
 // Função para finalizar o pedido
 function finalizePedido() {
@@ -205,6 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
     carregarProdutos();
     const modal = document.getElementById('cart-modal');
     modal.style.display = 'none';
+    initializeCartModal();
 });
 
 // Adicionar evento para fechar o modal ao clicar fora
