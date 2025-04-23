@@ -6,6 +6,7 @@
     <title>Marmitaria Família</title>
     <link rel="shortcut icon" href="img/logo-familia.png" type="image/x-icon">
     <link rel="stylesheet" href="css/familia.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode.js@1.0.0/qrcode.min.js"></script>
 </head>
 <body>
     <header>
@@ -27,11 +28,28 @@
                     <img src="img/frango-assado.png" alt="Frango assado">
                     <h3>Frango Assado com Arroz, Brócolis e Purê de Batata</h3>
                     <div class="product-controls">
-                        <select class="size-select" data-name="Frango Assado com Arroz, Brócolis e Purê de Batata">
-                            <option value="grande-14">Grande - R$ 14,00</option>
+                        <select class="size-select">
                             <option value="media-12">Média - R$ 12,00</option>
+                            <option value="grande-14">Grande - R$ 14,00</option>
                         </select>
-                        <button class="add-to-cart" data-price="12">Adicionar ao Carrinho</button>
+                        <div class="protein-options" style="display: none;">
+                            <label>Escolha até 2 proteínas:</label>
+                            <div class="protein-checkboxes">
+                                <label>
+                                    <input type="checkbox" name="protein" value="frango-assado"> Frango Assado
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="protein" value="frango-sugo"> Frango ao Sugo
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="protein" value="estrogonofe"> Estrogonofe
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="protein" value="sobrecoxa"> Sobrecoxa
+                                </label>
+                            </div>
+                        </div>
+                        <button class="add-to-cart" data-price="12.00">Adicionar ao Carrinho</button>
                     </div>
                 </div>
 
@@ -40,11 +58,28 @@
                     <img src="img/frango-cozido.png" alt="Frango ao sugo">
                     <h3>Frango ao Sugo com Queijo, Arroz e Batata Assada</h3>
                     <div class="product-controls">
-                        <select class="size-select" data-name="Frango ao Sugo com Queijo, Arroz e Batata Assada">
-                            <option value="grande-14">Grande - R$ 14,00</option>
+                        <select class="size-select">
                             <option value="media-12">Média - R$ 12,00</option>
+                            <option value="grande-14">Grande - R$ 14,00</option>
                         </select>
-                        <button class="add-to-cart" data-price="12">Adicionar ao Carrinho</button>
+                        <div class="protein-options" style="display: none;">
+                            <label>Escolha até 2 proteínas:</label>
+                            <div class="protein-checkboxes">
+                                <label>
+                                    <input type="checkbox" name="protein" value="frango-assado"> Frango Assado
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="protein" value="frango-sugo"> Frango ao Sugo
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="protein" value="estrogonofe"> Estrogonofe
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="protein" value="sobrecoxa"> Sobrecoxa
+                                </label>
+                            </div>
+                        </div>
+                        <button class="add-to-cart" data-price="12.00">Adicionar ao Carrinho</button>
                     </div>
                 </div>
 
@@ -53,11 +88,28 @@
                     <img src="img/strogonof-frango.png" alt="Estrogonofe de frango">
                     <h3>Estrogonofe de Frango, Arroz Branco e Batata Assada</h3>
                     <div class="product-controls">
-                        <select class="size-select" data-name="Estrogonofe de Frango, Arroz Branco e Batata Assada">
-                            <option value="grande-14">Grande - R$ 14,00</option>
+                        <select class="size-select">
                             <option value="media-12">Média - R$ 12,00</option>
+                            <option value="grande-14">Grande - R$ 14,00</option>
                         </select>
-                        <button class="add-to-cart" data-price="12">Adicionar ao Carrinho</button>
+                        <div class="protein-options" style="display: none;">
+                            <label>Escolha até 2 proteínas:</label>
+                            <div class="protein-checkboxes">
+                                <label>
+                                    <input type="checkbox" name="protein" value="frango-assado"> Frango Assado
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="protein" value="frango-sugo"> Frango ao Sugo
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="protein" value="estrogonofe"> Estrogonofe
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="protein" value="sobrecoxa"> Sobrecoxa
+                                </label>
+                            </div>
+                        </div>
+                        <button class="add-to-cart" data-price="12.00">Adicionar ao Carrinho</button>
                     </div>
                 </div>
 
@@ -66,11 +118,28 @@
                     <img src="img/assado-panela.png" alt="Sobrecoxa com ervilha">
                     <h3>Sobrecoxa com Ervilha, Purê de Batata e Cenoura</h3>
                     <div class="product-controls">
-                        <select class="size-select" data-name="Sobrecoxa com Ervilha, Purê de Batata e Cenoura">
-                            <option value="grande-14">Grande - R$ 14,00</option>
+                        <select class="size-select">
                             <option value="media-12">Média - R$ 12,00</option>
+                            <option value="grande-14">Grande - R$ 14,00</option>
                         </select>
-                        <button class="add-to-cart" data-price="12">Adicionar ao Carrinho</button>
+                        <div class="protein-options" style="display: none;">
+                            <label>Escolha até 2 proteínas:</label>
+                            <div class="protein-checkboxes">
+                                <label>
+                                    <input type="checkbox" name="protein" value="frango-assado"> Frango Assado
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="protein" value="frango-sugo"> Frango ao Sugo
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="protein" value="estrogonofe"> Estrogonofe
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="protein" value="sobrecoxa"> Sobrecoxa
+                                </label>
+                            </div>
+                        </div>
+                        <button class="add-to-cart" data-price="12.00">Adicionar ao Carrinho</button>
                     </div>
                 </div>
             </div>
@@ -86,7 +155,6 @@
 
                 <!-- Formulário de Finalização -->
                 <form id="checkoutForm">
-                   
                     <label for="customerName">Nome:</label>
                     <input type="text" id="customerName" required>
 
@@ -99,24 +167,50 @@
                     <label for="customerAddress">Endereço:</label>
                     <input type="text" id="customerAddress">
 
-                    <div id="changeSection" style="display: none;">
+                    <label for="observations">Observações:</label>
+                    <textarea id="observations" rows="3" placeholder="Alguma observação sobre seu pedido?"></textarea>
+
+                    <div id="changeSection">
                         <label for="paymentMethod">Método de Pagamento:</label>
-                        <select id="paymentMethod">
-                            <option value="cartao">Cartão</option>
-                            <option value="pix">Pix</option>
+                        <select id="paymentMethod" required>
+                            <option value="">Selecione a forma de pagamento</option>
+                            <option value="pix">PIX</option>
+                            
                             <option value="dinheiro">Dinheiro</option>
                         </select>
+
+                        <div id="pixPaymentSection" style="display: none;">
+                            <div class="pix-container">
+                                <h3>Pagamento via PIX</h3>
+                                <p>Total a pagar: R$ <span class="pix-value">0,00</span></p>
+                                <div class="pix-key-container">
+                                    <p>Chave PIX:</p>
+                                    <div class="pix-key">
+                                        <span>Mariaclaudiasouza1028@gmail.com</span>
+                                        <button type="button" id="copyPixKey" class="copy-button">Copiar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <div id="changeDetails" style="display: none;">
                             <label for="changeFor">Troco para:</label>
                             <input type="number" id="changeFor" placeholder="Ex: 50" min="0" step="0.01">
-                            <p id="changeAmount" style="display: none; color: #2ecc71; margin-top: 5px;">
-                                O motoboy deve levar R$ <span id="changeValue">0,00</span> de troco.
+                            <p id="changeAmount" style="display: none;">
+                                O motoboy levará R$ <span id="changeValue">0,00</span> de troco
                             </p>
                         </div>
                     </div>
 
-                    <button type="submit" id="sendOrder">Enviar Pedido</button>
+                    <div class="order-summary" style="display: none;">
+                        <h3>Resumo do Pedido</h3>
+                        <div class="summary-content"></div>
+                        <p class="total-amount">Total: R$ <span class="total-value">0,00</span></p>
+                    </div>
+
+                    <button type="submit" id="sendOrder">
+                        <a href="#" id="whatsappLink" target="_blank" rel="noopener noreferrer">Enviar Pedido</a>
+                    </button>
                 </form>
             </div>
         </div>
