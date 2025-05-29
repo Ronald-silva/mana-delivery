@@ -25,7 +25,7 @@ const Footer: React.FC = () => {
             {/* Seção de Localização */}
             <div className="text-center">
               <div className="flex items-center justify-center gap-3 mb-2">
-                <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
                   <MapPin size={16} className="text-white" />
                 </div>
                 <div>
@@ -47,7 +47,7 @@ const Footer: React.FC = () => {
                 
                 {/* Horário */}
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                  <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center">
                     <Clock size={16} className="text-white" />
                   </div>
                   <span className="text-gray-300 text-sm">Aberto das 17h - 01h</span>
