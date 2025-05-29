@@ -42,26 +42,15 @@ const Footer: React.FC = () => {
             
             {/* Seção de Contato */}
             <div className="text-center">
-              <div className="flex items-center justify-center gap-4">
-                {/* Telefone */}
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
-                    <Phone size={16} className="text-white" />
-                  </div>
-                  <button 
-                    onClick={handlePhoneClick}
-                    className="text-gray-300 text-sm hover:text-primary transition-colors"
-                  >
-                    (85) 98646-0097
-                  </button>
-                </div>
+              <div className="flex items-center justify-center gap-3">
+                
                 
                 {/* Horário */}
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
                     <Clock size={16} className="text-white" />
                   </div>
-                  <span className="text-gray-300 text-sm">17h - 01h</span>
+                  <span className="text-gray-300 text-sm">Aberto das 17h - 01h</span>
                 </div>
               </div>
             </div>
