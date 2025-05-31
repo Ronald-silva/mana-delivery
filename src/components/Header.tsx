@@ -18,10 +18,12 @@ const Header: React.FC<HeaderProps> = ({ onCartClick }) => {
                 alt="Sanduíche do Chefe" 
                 className="w-15 h-15 rounded-full object-cover"
               />
-            </div>
-            <div className="text-center">
-              <h1 className="text-2xl font-bold text-white tracking-wide">SANDUÍCHE DO CHEFE</h1>
-              <p className="text-sm text-orange-100 font-medium">Pizzaria & Lanchonete</p>
+            </div>            <div className="text-center">              <h1 className="text-2xl font-bold text-white tracking-wide text-shadow-sm relative">
+                <span className="relative inline-block">
+                  SANDUÍCHE DO CHEFE
+                  <span className="absolute left-0 right-0 bottom-0 h-1 bg-black rounded-full"></span>
+                </span>
+              </h1>
             </div>
           </div>
         </div>

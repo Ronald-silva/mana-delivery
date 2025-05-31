@@ -32,13 +32,14 @@ const Menu: React.FC = () => {
     const category = menuCategories.find(cat => cat.id === categoryId);
     return category ? category.name : categoryId;
   };
-
   return (
     <div className="bg-gray-50 min-h-screen">
-      <CategoryFilter 
-        activeCategory={activeCategory} 
-        onCategoryChange={setActiveCategory} 
-      />
+      <div className="w-full">
+        <CategoryFilter 
+          activeCategory={activeCategory} 
+          onCategoryChange={setActiveCategory} 
+        />
+      </div>
       
       <div className="container mx-auto px-4 py-6 mt-6">
         {Object.entries(groupedItems).map(([categoryId, items]) => (

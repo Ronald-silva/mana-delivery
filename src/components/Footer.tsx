@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
   };
 
   const handlePhoneClick = () => {
-    window.location.href = 'tel:+5585986460097';
+    window.location.href = 'tel:+5585991993833';
   };
 
   return (

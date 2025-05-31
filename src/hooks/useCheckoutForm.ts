@@ -80,7 +80,7 @@ ${orderItems}
 💳 *Pagamento:* ${paymentInfo}
     `.trim();
 
-    const whatsappNumber = '5585986460097';
+    const whatsappNumber = '5585991993833';
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(orderMessage)}`;
     
     window.open(whatsappUrl, '_blank');

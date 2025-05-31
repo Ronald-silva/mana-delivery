@@ -9,13 +9,12 @@ interface CategoryFilterProps {
 
 const CategoryFilter: React.FC<CategoryFilterProps> = ({ activeCategory, onCategoryChange }) => {
   return (
-    <div className="bg-white shadow-sm sticky top-[68px] z-40">
-      <div className="container mx-auto px-4 py-4">
+    <div className="bg-white shadow-sm sticky top-[68px] z-40 w-full">
+      <div className="container mx-auto px-4 py-4 overflow-hidden">
         {/* Container centralizado */}
-        <div className="flex justify-center">
-          {/* Scrollable categories container centralizado */}
+        <div className="flex justify-center">{/* Scrollable categories container centralizado */}
           <div 
-            className="flex gap-3 overflow-x-auto pb-2 px-6"
+            className="flex gap-3 overflow-x-auto overflow-y-hidden px-6"
             style={{
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
@@ -39,9 +38,8 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({ activeCategory, onCateg
             ))}
           </div>
         </div>
-        
-        {/* Scroll indicator dots centralizados */}
-        <div className="flex justify-center mt-2 gap-1">
+          {/* Scroll indicator dots centralizados */}
+        <div className="flex justify-center gap-1 h-2">
           {menuCategories.map((_, index) => (
             <div
               key={index}
