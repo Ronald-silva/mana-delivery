@@ -20,6 +20,23 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Adicionar fonte Rockwell via WebFontLoader para melhor desempenho -->
+    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+    <script>
+      WebFont.load({
+        custom: {
+          families: ['Rockwell:n7'],
+          urls: ['https://db.onlinewebfonts.com/c/31978a3de024aba28433d2e2e84e481d.css']
+        }
+      });
+    </script>
+    <style>
+      /* Fallback para Rockwell caso a fonte não carregue */
+      .font-rockwell {
+        font-family: 'Rockwell', 'Courier New', serif;
+        font-weight: 700;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

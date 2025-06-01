@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Minus, Plus, X } from 'lucide-react';
 import { CartItem } from '@/data/menuData';
@@ -10,11 +9,11 @@ interface CartItemRowProps {
   onRemoveFromCart: (itemId: string, size?: 'grande' | 'familia') => void;
 }
 
-const CartItemRow: React.FC<CartItemRowProps> = ({ 
-  item, 
-  index, 
-  onUpdateQuantity, 
-  onRemoveFromCart 
+const CartItemRow: React.FC<CartItemRowProps> = ({
+  item,
+  index,
+  onUpdateQuantity,
+  onRemoveFromCart
 }) => {
   const formatPrice = (price: number) => {
     return `R$ ${price.toFixed(2).replace('.', ',')}`;
@@ -25,21 +24,20 @@ const CartItemRow: React.FC<CartItemRowProps> = ({
       <div className="flex-1">
         <h4 className="font-medium">{item.name}</h4>
         {item.size && (
-          <p className="text-sm text-gray-600 capitalize">Tamanho: {item.size}</p>
+          <p className="text-sm text-gray-600 capitalize">Tamanho: {item.size}</p>      
         )}
-        <p className="text-primary font-bold">{formatPrice(item.selectedPrice)}</p>
+        <p className="text-primary font-bold">{formatPrice(item.selectedPrice)}</p>     
       </div>
-      
       <div className="flex items-center gap-2">
         <button
-          onClick={() => onUpdateQuantity(item.id, item.quantity - 1, item.size)}
+          onClick={() => onUpdateQuantity(item.id, item.quantity - 1, item.size)}       
           className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300"
         >
           <Minus size={16} />
         </button>
-        <span className="w-8 text-center font-medium">{item.quantity}</span>
+        <span className="w-8 text-center font-medium text-gray-800">{item.quantity}</span>
         <button
-          onClick={() => onUpdateQuantity(item.id, item.quantity + 1, item.size)}
+          onClick={() => onUpdateQuantity(item.id, item.quantity + 1, item.size)}       
           className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300"
         >
           <Plus size={16} />

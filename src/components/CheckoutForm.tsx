@@ -29,8 +29,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onBack, onClose }) => {
 
   const onOrderSubmit = () => {
     // Create a synthetic form event for the handleSubmit function
-    const syntheticEvent = new Event('submit') as any;
-    syntheticEvent.preventDefault = () => {};
+    const syntheticEvent = {
+      preventDefault: () => {},
+    } as React.FormEvent<HTMLFormElement>;
     handleSubmit(syntheticEvent);
   };
 

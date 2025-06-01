@@ -2,9 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Rockwell';
+  src: url('https://db.onlinewebfonts.com/t/31978a3de024aba28433d2e2e84e481d.woff2') format('woff2'),
+       url('https://db.onlinewebfonts.com/t/31978a3de024aba28433d2e2e84e481d.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer utilities {
   .text-shadow-sm {
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+  }
+  
+  .font-rockwell {
+    font-family: 'Rockwell', 'Courier New', serif;
+    font-weight: 740;
+    letter-spacing: 0.5px;
   }
 }
 
