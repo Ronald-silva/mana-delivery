@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Atualizando Sanduíche do Chefe</title>
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #FFEDD5;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .container {
+      max-width: 500px;
+      padding: 30px;
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      color: #292524;
+      margin-top: 0;
+    }
+    p {
+      color: #57534E;
+      line-height: 1.5;
+    }
+    .loader {
+      margin: 20px auto;
+      width: 60px;
+      height: 60px;
+      border: 6px solid #E7E5E4;
+      border-top: 6px solid #F97316;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .button {
+      background-color: #F97316;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 20px;
+      text-decoration: none;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Atualizando o Sanduíche do Chefe</h1>
+    <p>Estamos limpando o cache e atualizando a aplicação para a versão mais recente.</p>
+    <div class="loader"></div>
+    <p id="message">Aguarde, você será redirecionado em breve...</p>
+    <a href="/" class="button" id="manual-redirect">Ir para a página inicial</a>
+  </div>
+  
+  <script>
+    // Função para limpar o cache e redirecionar
+    async function clearCacheAndRedirect() {
+      try {
+        // Limpar o cache do service worker
+        if ('serviceWorker' in navigator) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          for (const registration of registrations) {
+            await registration.unregister();
+          }
+        }
+        
+        // Limpar caches de aplicação
+        if ('caches' in window) {
+          const cacheNames = await caches.keys();
+          await Promise.all(
+            cacheNames.map(cacheName => caches.delete(cacheName))
+          );
+        }
+        
+        // Limpar localStorage e sessionStorage
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        // Definir cookie para indicar que o cache foi limpo
+        document.cookie = "cache-cleared=true; path=/";
+        
+        // Redirecionar para a página inicial após 3 segundos
+        setTimeout(() => {
+          document.getElementById('message').textContent = 'Redirecionando...';
+          window.location.href = '/?v=' + new Date().getTime();
+        }, 3000);
+        
+      } catch (error) {
+        console.error('Erro ao limpar cache:', error);
+        document.getElementById('message').textContent = 
+          'Houve um problema. Por favor, clique no botão abaixo para continuar.';
+      }
+    }
+    
+    // Iniciar limpeza quando a página carregar
+    window.addEventListener('load', clearCacheAndRedirect);
+  </script>
+</body>
+</html>
