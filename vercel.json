@@ -2,6 +2,20 @@
   "version": 2,
   "routes": [
     {
+      "src": "/(.*)",
+      "status": 308,
+      "headers": {
+        "Location": "https://sanduiche-do-chefe.vercel.app/$1"
+      },
+      "continue": false,
+      "has": [
+        {
+          "type": "host",
+          "value": "(?!sanduiche-do-chefe.vercel.app).*"
+        }
+      ]
+    },
+    {
       "src": "/(.*)\\.(?:js|css|png|jpg|jpeg|gif|ico|json|svg)$",
       "headers": {
         "Cache-Control": "public, max-age=0, must-revalidate"
