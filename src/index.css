@@ -8,9 +8,11 @@
   }
 
   .font-rockwell {
-    font-family: 'Rockwell', 'Courier New', serif;
+    font-family: 'Rockwell', 'Courier New', 'serif';
     font-weight: 700;
     letter-spacing: 0.5px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
