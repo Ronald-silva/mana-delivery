@@ -1,0 +1,13 @@
+/* Configuração da fonte Rockwell */
+@font-face {
+  font-family: 'Rockwell';
+  src: url('https://db.onlinewebfonts.com/t/31978a3de024aba28433d2e2e84e481d.eot');
+  src: url('https://db.onlinewebfonts.com/t/31978a3de024aba28433d2e2e84e481d.eot?#iefix') format('embedded-opentype'),
+       url('https://db.onlinewebfonts.com/t/31978a3de024aba28433d2e2e84e481d.woff2') format('woff2'),
+       url('https://db.onlinewebfonts.com/t/31978a3de024aba28433d2e2e84e481d.woff') format('woff'),
+       url('https://db.onlinewebfonts.com/t/31978a3de024aba28433d2e2e84e481d.ttf') format('truetype'),
+       url('https://db.onlinewebfonts.com/t/31978a3de024aba28433d2e2e84e481d.svg#Rockwell') format('svg');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

@@ -16,6 +16,13 @@
       ]
     },
     {
+      "src": "/fonts/(.*)\\.(?:woff|woff2|eot|ttf|svg)$",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable",
+        "Access-Control-Allow-Origin": "*"
+      }
+    },
+    {
       "src": "/(.*)\\.(?:js|css|png|jpg|jpeg|gif|ico|json|svg)$",
       "headers": {
         "Cache-Control": "public, max-age=0, must-revalidate"

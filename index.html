@@ -20,25 +20,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Fonte Rockwell via WebFontLoader para melhor desempenho e compatibilidade -->
-    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
-    <script>
-      WebFont.load({
-        custom: {
-          families: ['Rockwell:n4,n7'],
-          urls: ['https://db.onlinewebfonts.com/c/31978a3de024aba28433d2e2e84e481d.css'],
-          testStrings: {
-            'Rockwell': 'SANDUÍCHE DO CHEFE'
-          }
-        },
-        active: function() {
-          console.log('Rockwell font loaded successfully');
-        },
-        inactive: function() {
-          console.log('Rockwell font could not be loaded, using fallbacks');
-        }
-      });
-    </script>
+    <!-- Preload da fonte Rockwell para evitar FOUT (Flash of Unstyled Text) -->
+    <link rel="preload" href="https://db.onlinewebfonts.com/t/31978a3de024aba28433d2e2e84e481d.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+    <link rel="stylesheet" href="/fonts/rockwell/rockwell.css">
     
     <!-- Estilos personalizados movidos para src/index.css -->
   </head>
