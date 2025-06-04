@@ -20,6 +20,20 @@ If you want to work locally using your own IDE, you can clone this repo and push
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
+## Como implantar no Vercel
+
+Este projeto está configurado para ser implantado no Vercel de forma automática. Para uma implantação bem-sucedida:
+
+1. Conecte seu repositório GitHub ao Vercel
+2. O arquivo `vercel.json` já está configurado corretamente
+3. O processo de build gerará os arquivos estáticos na pasta `dist`
+4. O script `vercel-build` é usado durante a implantação
+
+Se encontrar problemas de implantação:
+- Certifique-se de que o Vercel esteja configurado para usar a pasta `dist` como diretório de saída
+- Verifique se há erros no console durante o processo de build
+- Certifique-se de que todas as dependências estão listadas no `package.json`
+
 Follow these steps:
 
 ```sh

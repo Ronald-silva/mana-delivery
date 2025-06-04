@@ -26,8 +26,10 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  // Adiciona timestamp como parte do nome dos arquivos para evitar problemas de cache
   build: {
+    outDir: "dist",
+    emptyOutDir: true,
+    // Adiciona timestamp como parte do nome dos arquivos para evitar problemas de cache
     rollupOptions: {
       output: {
         entryFileNames: `assets/[name]-${timestamp}.[hash].js`,
