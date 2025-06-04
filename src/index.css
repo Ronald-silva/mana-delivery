@@ -7,13 +7,25 @@
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
   }
 
-  .font-rockwell {
-    font-family: 'Rockwell', 'Courier New', 'serif';
-    font-weight: 700;
-    letter-spacing: 0.5px;
+  .font-display {
+    font-family: 'Bebas Neue', Impact, sans-serif;
+    font-weight: 400; /* Bebas Neue só tem peso 400 */
+    letter-spacing: 1px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    text-transform: uppercase;
+  }
+  
+  /* Mantemos a classe antiga para compatibilidade */
+  .font-rockwell {
+    font-family: 'Bebas Neue', Impact, sans-serif;
+    font-weight: 400;
+    letter-spacing: 1px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    text-transform: uppercase;
   }
 }
 

@@ -19,7 +19,7 @@ const Header: React.FC<HeaderProps> = ({ onCartClick }) => {
               />
             </div>
             <div className="text-center">
-              <h1 className="text-2xl font-rockwell tracking-wide text-shadow-sm relative">
+              <h1 className="text-2xl font-display tracking-wide text-shadow-sm relative">
                 <span className="relative inline-block">
                   SANDUÍCHE <br />DO CHEFE
                   <span className="absolute left-0 right-0 bottom-0 h-1 bg-black rounded-full"></span>

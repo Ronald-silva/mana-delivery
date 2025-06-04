@@ -36,6 +36,9 @@
     
     h1 {
       color: #FF9800;
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 48px;
+      margin-bottom: 20px;
     }
     
     .header-test {
@@ -46,43 +49,58 @@
       text-align: center;
       text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
     }
+    
+    .example-sizes .font-display {
+      display: block;
+      margin-bottom: 15px;
+    }
   </style>
 </head>
 <body>
-  <h1>Teste da Fonte Rockwell</h1>
+  <h1>TESTE DA FONTE BEBAS NEUE</h1>
   
   <div class="test-box">
     <p>Este é um texto usando a fonte padrão do site para comparação.</p>
-    <p class="rockwell-test">Este texto está usando a fonte Rockwell.</p>
+    <p class="font-display">Este texto está usando a fonte Bebas Neue.</p>
   </div>
   
   <div class="test-box header-test">
-    <h2 class="rockwell-test">SANDUÍCHE DO CHEFE</h2>
+    <h2 class="font-display" style="font-size: 28px; margin: 0;">SANDUÍCHE DO CHEFE</h2>
     <p>Apareço no header do site</p>
+  </div>
+  
+  <div class="test-box example-sizes">
+    <h3>Exemplos de tamanhos:</h3>
+    <span class="font-display" style="font-size: 14px;">Bebas Neue - 14px</span>
+    <span class="font-display" style="font-size: 18px;">Bebas Neue - 18px</span>
+    <span class="font-display" style="font-size: 24px;">Bebas Neue - 24px</span>
+    <span class="font-display" style="font-size: 32px;">Bebas Neue - 32px</span>
+    <span class="font-display" style="font-size: 48px;">Bebas Neue - 48px</span>
   </div>
   
   <div class="test-box">
     <h3>Informações sobre a Fonte:</h3>
     <ul>
-      <li>Nome: Rockwell</li>
-      <li>Peso: 700 (Bold)</li>
-      <li>Fornecedor: OnlineWebFonts</li>
-      <li>Formatos implementados: EOT, WOFF2, WOFF, TTF, SVG</li>
+      <li>Nome: Bebas Neue</li>
+      <li>Peso: 400 (Regular)</li>
+      <li>Fornecedor: Google Fonts</li>
+      <li>Estilo: Display, Sans-serif, Condensed</li>
+      <li>Uso recomendado: Títulos, Rótulos e Destaques</li>
     </ul>
   </div>
   
-  <p>Se você conseguir visualizar a fonte Rockwell corretamente nesta página, significa que a implementação está funcionando.</p>
+  <p>Se você conseguir visualizar a fonte Bebas Neue corretamente nesta página, significa que a implementação está funcionando.</p>
   
   <script>
     // Verificador simples de carregamento da fonte
     document.fonts.ready.then(() => {
-      const rockwellLoaded = document.fonts.check('700 16px Rockwell');
-      console.log('Fonte Rockwell carregada:', rockwellLoaded);
+      const fontLoaded = document.fonts.check('400 16px "Bebas Neue"');
+      console.log('Fonte Bebas Neue carregada:', fontLoaded);
       
-      if (!rockwellLoaded) {
-        document.body.innerHTML += '<div style="background-color:#ffcccc; padding:15px; margin-top:20px; border-radius:8px;"><p><strong>Atenção:</strong> A fonte Rockwell não foi carregada corretamente. Verifique a implementação.</p></div>';
+      if (!fontLoaded) {
+        document.body.innerHTML += '<div style="background-color:#ffcccc; padding:15px; margin-top:20px; border-radius:8px;"><p><strong>Atenção:</strong> A fonte Bebas Neue não foi carregada corretamente. Verifique a implementação.</p></div>';
       } else {
-        document.body.innerHTML += '<div style="background-color:#ccffcc; padding:15px; margin-top:20px; border-radius:8px;"><p><strong>Sucesso:</strong> A fonte Rockwell foi carregada corretamente!</p></div>';
+        document.body.innerHTML += '<div style="background-color:#ccffcc; padding:15px; margin-top:20px; border-radius:8px;"><p><strong>Sucesso:</strong> A fonte Bebas Neue foi carregada corretamente!</p></div>';
       }
     });
   </script>
