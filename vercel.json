@@ -16,6 +16,11 @@
       ]
     },
     {
+      "src": "^/(?!api).*",
+      "dest": "/index.html",
+      "status": 200
+    },
+    {
       "src": "/fonts/(.*)\\.(?:woff|woff2|eot|ttf|svg)$",
       "headers": {
         "Cache-Control": "public, max-age=31536000, immutable",
@@ -47,15 +52,8 @@
   "github": {
     "silent": false
   },
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
+  "framework": "vite",
+  "outputDirectory": "dist",
   "headers": [
     {
       "source": "/(.*)",

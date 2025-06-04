@@ -1,0 +1,51 @@
+/*
+  Esta página de fallback garante que rotas inexistentes sejam redirecionadas para o index.html,
+  permitindo que o React Router lide com as rotas no lado do cliente.
+*/
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="0;url=/">
+    <title>Redirecionando...</title>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        text-align: center;
+        color: #FF9800;
+        background-color: #f9f9f9;
+      }
+      
+      .loader {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        border: 3px solid rgba(255, 152, 0, 0.3);
+        border-radius: 50%;
+        border-top-color: #FF9800;
+        animation: spin 1s ease-in-out infinite;
+        margin-bottom: 20px;
+      }
+      
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <div class="loader"></div>
+      <p>Redirecionando para a página inicial...</p>
+    </div>
+    <script>
+      window.location.href = '/';
+    </script>
+  </body>
+</html>
