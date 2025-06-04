@@ -72,7 +72,7 @@ const Footer: React.FC = () => {
           {/* Copyright */}
           <div className="mt-6 pt-4 border-t border-gray-800 text-center">
             <p className="text-gray-400 text-xs">
-              © 2024 Sanduíche do Chefe. Todos os direitos reservados.
+              © 2024 Sanduíche do Chefe.
             </p>
           </div>
         </div>

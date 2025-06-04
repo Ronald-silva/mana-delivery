@@ -29,21 +29,12 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: "dist",
     emptyOutDir: true,
-    minify: 'terser',
-    // Configuração especial para Vercel
-    sourcemap: process.env.VERCEL ? false : true,
-    // Adiciona timestamp como parte do nome dos arquivos para evitar problemas de cache
+    // Configuração simplificada para evitar problemas com o Vercel
     rollupOptions: {
       output: {
-        entryFileNames: `assets/[name]-${timestamp}.[hash].js`,
-        chunkFileNames: `assets/[name]-${timestamp}.[hash].js`,
-        assetFileNames: `assets/[name]-${timestamp}.[hash].[ext]`,
-        manualChunks(id) {
-          // Dividir as bibliotecas do node_modules em um chunk separado para melhor cache
-          if (id.includes('node_modules')) {
-            return 'vendor';
-          }
-        },
+        entryFileNames: `assets/[name].[hash].js`,
+        chunkFileNames: `assets/[name].[hash].js`,
+        assetFileNames: `assets/[name].[hash].[ext]`,
       },
     },
   },

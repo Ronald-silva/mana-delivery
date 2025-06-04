@@ -13,7 +13,7 @@ const Header: React.FC<HeaderProps> = ({ onCartClick }) => {
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-full flex items-center justify-center shadow-sm">
               <img
-                src="/lovable-uploads/logo.png"
+                src="/image/logo.png"
                 alt="Sanduíche do Chefe"
                 className="w-15 h-15 rounded-full object-cover"
               />
