@@ -58,7 +58,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({ activeCategory, onCateg
           <div
             ref={scrollContainerRef}
             onScroll={checkScroll}
-            className="flex gap-2 overflow-x-auto scrollbar-hide scroll-smooth px-10"
+            className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth px-10 py-1"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {menuCategories.map((category, index) => {

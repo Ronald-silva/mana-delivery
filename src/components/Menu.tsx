@@ -84,13 +84,13 @@ const Menu: React.FC = () => {
             className="w-full h-48 md:h-64 lg:h-72 object-cover object-center group-hover:scale-105 transition-transform duration-700"
           />
           <div className="absolute inset-0 z-20 flex flex-col justify-center px-6 md:px-12 text-shadow-md">
-            <div className="flex flex-wrap items-center gap-3 mb-3">
-              <span className="bg-red-500 text-white text-[10px] md:text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-md">
+            <div className="flex flex-wrap items-center gap-3 mb-5">
+              <span className="bg-red-500 text-white text-[10px] md:text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1 shadow-md uppercase tracking-wider">
                 <Sparkles size={12} /> SUPER OFERTA
               </span>
-              <span className="scale-75 origin-left md:scale-95">
+              <div className="scale-75 origin-left md:scale-95">
                 <StatusFuncionamento />
-              </span>
+              </div>
             </div>
             <h2 className="text-3xl md:text-5xl lg:text-6xl font-display text-white mb-2 leading-none text-shadow-md tracking-wide">
               Combo Big Chefe

@@ -78,10 +78,10 @@ const ProductCard = ({ item, onClick }: ProductCardProps) => {
 
       {/* Content Section */}
       <div className="flex-1 flex flex-col p-5">
-        <h3 className="font-bold text-xl text-gray-900 mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+        <h3 className="font-bold text-xl text-gray-900 mb-2 line-clamp-2 leading-snug group-hover:text-primary transition-colors">
           {item.name}
         </h3>
-        <p className="text-gray-600 text-sm mb-4 flex-1 line-clamp-2">
+        <p className="text-gray-600 text-sm mb-5 flex-1 line-clamp-2 leading-relaxed">
           {item.description}
         </p>
 
@@ -91,7 +91,7 @@ const ProductCard = ({ item, onClick }: ProductCardProps) => {
             <div className="text-xs text-gray-500 mb-1">
               {hasSizeOptions ? 'A partir de' : 'Preço'}
             </div>
-            <span className="text-3xl font-display bg-gradient-to-r from-primary via-orange-500 to-orange-600 bg-clip-text text-transparent leading-none">
+            <span className="text-2xl md:text-3xl font-display bg-gradient-to-r from-primary via-orange-500 to-orange-600 bg-clip-text text-transparent leading-none">
               {formatPrice(basePrice)}
             </span>
           </div>

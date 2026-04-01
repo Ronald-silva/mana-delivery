@@ -50,7 +50,7 @@ const Header: React.FC<HeaderProps> = ({ onCartClick }) => {
             <div className="flex items-center gap-3 group cursor-pointer">
               <div className="relative">
                 <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-300"></div>
-                <div className="relative bg-gradient-to-br from-primary to-orange-600 p-3 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <div className="relative bg-gradient-to-br from-primary to-orange-600 p-2 md:p-3 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
                   <img 
                     src="/image/logo.png" 
                     alt="Logo Sanduíche do Chefe" 
@@ -58,16 +58,16 @@ const Header: React.FC<HeaderProps> = ({ onCartClick }) => {
                   />
                 </div>
               </div>
-              <div>
-                <h1 className="font-display text-2xl md:text-3xl lg:text-4xl text-gray-900 dark:text-gray-100 leading-none tracking-wide">
+              <div className="flex flex-col gap-0.5">
+                <h1 className="font-display text-2xl md:text-3xl lg:text-4xl text-gray-900 dark:text-gray-100 leading-tight tracking-wide">
                   Sanduíche do Chefe
                 </h1>
-                <p className="text-xs md:text-sm text-muted-foreground font-medium flex items-center gap-2">
+                <p className="text-xs md:text-sm text-muted-foreground font-medium">
                   Sabor que conquista 🍔
-                  <span className="lg:hidden scale-75 origin-left">
-                    <StatusFuncionamento />
-                  </span>
                 </p>
+                <div className="lg:hidden mt-1.5 scale-90 origin-left">
+                  <StatusFuncionamento />
+                </div>
               </div>
             </div>
 
