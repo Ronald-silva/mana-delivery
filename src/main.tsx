@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
+import './styles/animations.css'
 
 // Registra o service worker para gerenciar cache
 if ('serviceWorker' in navigator) {

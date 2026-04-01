@@ -17,7 +17,6 @@ export interface CartItem extends MenuItem {
 }
 
 export const menuCategories = [
-  { id: 'todos', name: 'Todos', icon: '🍽️' },
   { id: 'sanduiches', name: 'Sanduíches', icon: '🥪' },
   { id: 'pizzas', name: 'Pizzas', icon: '🍕' },
   { id: 'pasteis', name: 'Pastéis', icon: '🥟' },

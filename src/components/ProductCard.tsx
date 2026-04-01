@@ -1,119 +1,115 @@
-
-import React, { useState } from 'react';
-import { Plus } from 'lucide-react';
+import React from 'react';
+import { Plus, Sparkles } from 'lucide-react';
 import { MenuItem } from '@/data/menuData';
-import { useCart } from '@/contexts/CartContext';
+import { formatPrice } from '@/utils/formatPrice';
 
 interface ProductCardProps {
   item: MenuItem;
+  onClick: () => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ item }) => {
-  const { addToCart } = useCart();
-  const [selectedSize, setSelectedSize] = useState<'grande' | 'familia'>('grande');
-  const [quantity, setQuantity] = useState(1);
-
+const ProductCard = ({ item, onClick }: ProductCardProps) => {
   const hasSizeOptions = item.priceFamily !== undefined;
-  const currentPrice = selectedSize === 'familia' ? item.priceFamily! : item.price;
+  const basePrice = item.price;
 
-  const handleAddToCart = () => {
-    const cartItem = {
-      ...item,
-      quantity,
-      size: hasSizeOptions ? selectedSize : undefined,
-      selectedPrice: currentPrice
-    };
+  const getCategoryImage = () => {
+    if (item.image) return item.image;
     
-    addToCart(cartItem);
-    setQuantity(1);
-  };
-
-  const formatPrice = (price: number) => {
-    return `R$ ${price.toFixed(2).replace('.', ',')}`;
+    // Imagens Premium Fallback (Food Appeal)
+    const fallbackMap: { [key: string]: string } = {
+      'sanduiches': 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=500&q=80',
+      'pizzas': 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=500&q=80',
+      'pasteis': 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=500&q=80',
+      'bebidas': 'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=500&q=80',
+      'combos': 'https://images.unsplash.com/photo-1610440042657-612c34d95e9f?auto=format&fit=crop&w=500&q=80',
+      'adicionais': 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=500&q=80'
+    };
+    return fallbackMap[item.category] || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=500&q=80';
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 h-full flex flex-col hover:shadow-lg transition-shadow">
-      {/* Imagem placeholder */}
-      <div className="w-full h-32 bg-gray-200 rounded-lg mb-3 flex items-center justify-center">
-        <span className="text-4xl">
-          {item.category === 'sanduiches' ? '🥪' :
-           item.category === 'pizzas' ? '🍕' :
-           item.category === 'pasteis' ? '🥟' :
-           item.category === 'bebidas' ? '🥤' :
-           item.category === 'combos' ? '🍔' :
-           '🍽️'}
-        </span>
-      </div>
+    <div 
+      onClick={onClick}
+      className="group relative bg-white rounded-3xl shadow-md hover:shadow-premium-lg transition-all duration-500 overflow-hidden h-full flex flex-col animate-fade-in-up cursor-pointer hover:scale-[1.02] active:scale-[0.98] focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2"
+      tabIndex={0}
+      role="button"
+      aria-label={`Ver detalhes de ${item.name}`}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+    >
+      {/* Image Section */}
+      <div className="relative w-full h-40 md:h-48 overflow-hidden bg-gray-100 dark:bg-zinc-800">
+        <img 
+          src={getCategoryImage()} 
+          alt={item.name} 
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
 
-      {/* Conteúdo */}
-      <div className="flex-1 flex flex-col">
-        <h3 className="font-bold text-lg text-gray-800 mb-2">{item.name}</h3>
-        <p className="text-gray-600 text-sm mb-3 flex-1">{item.description}</p>
+        {/* Category Badge */}
+        <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-gray-700 shadow-md">
+          {item.category === 'sanduiches' ? 'Sanduíche' :
+           item.category === 'pizzas' ? 'Pizza' :
+           item.category === 'pasteis' ? 'Pastel' :
+           item.category === 'bebidas' ? 'Bebida' :
+           item.category === 'combos' ? 'Combo' : 'Adicional'}
+        </div>
 
-        {/* Seleção de tamanho para pizzas */}
-        {hasSizeOptions && (
-          <div className="mb-3">
-            <p className="text-sm font-medium text-gray-700 mb-2">Tamanho:</p>
-            <div className="flex gap-2">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name={`size-${item.id}`}
-                  value="grande"
-                  checked={selectedSize === 'grande'}
-                  onChange={(e) => setSelectedSize(e.target.value as 'grande')}
-                  className="text-primary"
-                />
-                <span className="text-sm">Grande - {formatPrice(item.price)}</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name={`size-${item.id}`}
-                  value="familia"
-                  checked={selectedSize === 'familia'}
-                  onChange={(e) => setSelectedSize(e.target.value as 'familia')}
-                  className="text-primary"
-                />
-                <span className="text-sm">Família - {formatPrice(item.priceFamily!)}</span>
-              </label>
-            </div>
+        {/* Special Badge for Combos */}
+        {item.category === 'combos' && (
+          <div className="absolute top-3 right-3 bg-gradient-to-r from-red-500 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1 animate-pulse-glow">
+            <Sparkles size={12} />
+            <span>Oferta</span>
           </div>
         )}
 
-        {/* Preço e controles */}
-        <div className="flex items-center justify-between">
+        {/* Size Options Indicator */}
+        {hasSizeOptions && (
+          <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full text-xs font-semibold text-primary shadow-md flex items-center gap-1">
+            <span>📏</span>
+            <span>2 tamanhos</span>
+          </div>
+        )}
+      </div>
+
+      {/* Content Section */}
+      <div className="flex-1 flex flex-col p-5">
+        <h3 className="font-bold text-xl text-gray-900 mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+          {item.name}
+        </h3>
+        <p className="text-gray-600 text-sm mb-4 flex-1 line-clamp-2">
+          {item.description}
+        </p>
+
+        {/* Price and Action */}
+        <div className="flex items-center justify-between gap-3 pt-3 border-t border-gray-100">
           <div>
-            <span className="text-2xl font-bold text-primary">
-              {formatPrice(currentPrice)}
+            <div className="text-xs text-gray-500 mb-1">
+              {hasSizeOptions ? 'A partir de' : 'Preço'}
+            </div>
+            <span className="text-3xl font-display bg-gradient-to-r from-primary via-orange-500 to-orange-600 bg-clip-text text-transparent leading-none">
+              {formatPrice(basePrice)}
             </span>
           </div>
           
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-300"
-              >
-                -
-              </button>
-              <span className="w-8 text-center font-medium">{quantity}</span>
-              <button
-                onClick={() => setQuantity(quantity + 1)}
-                className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-300"
-              >
-                +
-              </button>
+          {/* Add Button */}
+          <div className="relative group/btn">
+            <div className="absolute inset-0 bg-primary/20 rounded-full blur-lg group-hover/btn:blur-xl transition-all duration-300"></div>
+            <div className="relative bg-gradient-to-br from-primary to-orange-600 text-white p-3 rounded-full shadow-md group-hover/btn:shadow-lg transition-all duration-300 group-hover/btn:scale-110">
+              <Plus size={24} />
             </div>
-            
-            <button
-              onClick={handleAddToCart}
-              className="bg-primary text-white p-2 rounded-full hover:bg-orange-600 transition-colors"
-            >
-              <Plus size={20} />
-            </button>
           </div>
+        </div>
+
+        {/* Click Hint */}
+        <div className="mt-3 text-center">
+          <span className="text-xs text-gray-400 group-hover:text-primary transition-colors">
+            Clique para ver detalhes
+          </span>
         </div>
       </div>
     </div>

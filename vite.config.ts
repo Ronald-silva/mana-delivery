@@ -1,7 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import { componentTagger } from "lovable-tagger";
 
 // Gerar timestamp para versão do build
 const timestamp = new Date().toISOString().replace(/[^\d]/g, "").slice(0, 14);
@@ -18,9 +17,7 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    mode === 'development' &&
-    componentTagger(),
-  ].filter(Boolean),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -29,7 +26,6 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: "dist",
     emptyOutDir: true,
-    // Configuração simplificada para evitar problemas com o Vercel
     rollupOptions: {
       output: {
         entryFileNames: `assets/[name].[hash].js`,

@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { CheckoutFormData } from '@/types/checkout';
-import { useCart } from '@/contexts/CartContext';
+import { useCart } from '@/hooks/useCart';
 
 export const useCheckoutForm = (onClose: () => void) => {
   const { cartItems, getTotalPrice, clearCart } = useCart();
@@ -80,7 +80,7 @@ ${orderItems}
 💳 *Pagamento:* ${paymentInfo}
     `.trim();
 
-    const whatsappNumber = '5585991993833';
+    const whatsappNumber = '5585986460097';
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(orderMessage)}`;
     
     window.open(whatsappUrl, '_blank');

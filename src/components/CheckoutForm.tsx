@@ -36,18 +36,28 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onBack, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 sm:p-6">
-      <div className="bg-white rounded-lg w-full max-w-lg max-h-[90vh] flex flex-col shadow-2xl">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in-down">
+      <div className="bg-white rounded-3xl w-full max-w-lg max-h-[90vh] flex flex-col shadow-premium-lg animate-scale-in">
         {/* Header fixo */}
-        <div className="sticky top-0 bg-white rounded-t-lg flex items-center justify-between p-4 sm:p-6 border-b shadow-sm z-10">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Finalizar Pedido</h2>
-          <button 
-            onClick={onClose} 
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            aria-label="Fechar modal"
-          >
-            <X size={24} />
-          </button>
+        <div className="relative bg-gradient-to-r from-primary via-orange-600 to-orange-700 text-white rounded-t-3xl p-5">
+          {/* Decorative Pattern */}
+          <div className="absolute inset-0 opacity-10 rounded-t-3xl overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white rounded-full -translate-y-1/2 translate-x-1/2"></div>
+          </div>
+          
+          <div className="relative flex items-center justify-between">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold">Finalizar Pedido</h2>
+              <p className="text-white/90 text-sm mt-1">Preencha os dados para continuar</p>
+            </div>
+            <button 
+              onClick={onClose} 
+              className="p-2 hover:bg-white/20 rounded-full transition-all duration-300 hover:scale-110 active:scale-95"
+              aria-label="Fechar modal"
+            >
+              <X size={24} />
+            </button>
+          </div>
         </div>
 
         {/* Conteúdo com scroll */}

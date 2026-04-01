@@ -1,26 +1,6 @@
-
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { useState, ReactNode, useEffect } from 'react';
 import { CartItem } from '@/data/menuData';
-
-interface CartContextType {
-  cartItems: CartItem[];
-  addToCart: (item: CartItem) => void;
-  removeFromCart: (itemId: string, size?: 'grande' | 'familia') => void;
-  updateQuantity: (itemId: string, quantity: number, size?: 'grande' | 'familia') => void;
-  clearCart: () => void;
-  getTotalPrice: () => number;
-  getTotalItems: () => number;
-}
-
-const CartContext = createContext<CartContextType | undefined>(undefined);
-
-export const useCart = () => {
-  const context = useContext(CartContext);
-  if (!context) {
-    throw new Error('useCart must be used within a CartProvider');
-  }
-  return context;
-};
+import { CartContext } from './CartContextDefinition';
 
 interface CartProviderProps {
   children: ReactNode;
@@ -28,6 +8,39 @@ interface CartProviderProps {
 
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [lastAddedItem, setLastAddedItem] = useState<CartItem | null>(null);
+  const [isItemAdded, setIsItemAdded] = useState(false);
+
+  // Salvar carrinho no localStorage
+  useEffect(() => {
+    try {
+      const savedCart = localStorage.getItem('cart');
+      if (savedCart) {
+        setCartItems(JSON.parse(savedCart));
+      }
+    } catch (error) {
+      console.error('Erro ao carregar carrinho do localStorage:', error);
+    }
+  }, []);
+
+  // Atualizar localStorage quando o carrinho mudar
+  useEffect(() => {
+    try {
+      localStorage.setItem('cart', JSON.stringify(cartItems));
+    } catch (error) {
+      console.error('Erro ao salvar carrinho no localStorage:', error);
+    }
+  }, [cartItems]);
+
+  // Reset do indicador visual após um tempo
+  useEffect(() => {
+    if (isItemAdded) {
+      const timer = setTimeout(() => {
+        setIsItemAdded(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isItemAdded]);
 
   const addToCart = (newItem: CartItem) => {
     setCartItems(prevItems => {
@@ -43,6 +56,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         return [...prevItems, newItem];
       }
     });
+
+    // Registrar o último item adicionado para feedback visual
+    setLastAddedItem(newItem);
+    setIsItemAdded(true);
   };
 
   const removeFromCart = (itemId: string, size?: 'grande' | 'familia') => {
@@ -88,6 +105,8 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         clearCart,
         getTotalPrice,
         getTotalItems,
+        lastAddedItem,
+        isItemAdded,
       }}
     >
       {children}
